@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProjectStatus {
+  ACTIVE_DEVELOPMENT
+  RESEARCH_PROTOTYPE
+  ARCHITECTURAL_BLUEPRINT
+  PRODUCTION_READY
+}
+
+model Project {
+  id                     String              @id @default(uuid()) @db.Uuid
+  slug                   String              @unique
+  name                   String
+  shortDescription       String
+  category               String
+  isProduct              Boolean             @default(false)
+  featured               Boolean             @default(false)
+  developmentStatus      ProjectStatus       @default(ACTIVE_DEVELOPMENT)
+  publicationStatus      PublicationStatus   @default(PUBLISHED)
+  problemStatement       String              @db.Text
+  solutionOverview       String              @db.Text
+  architectureNotes      String              @db.Text
+  implementedFeatures    String[]
+  plannedFeatures        String[]
+  securityConsiderations String[]
+  githubUrl              String?
+  documentationUrl       String?
+  logoPath               String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  technologies           ProjectTechnology[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([publicationStatus])
+}
+
+model ProjectTechnology {
+  id        String   @id @default(uuid()) @db.Uuid
+  projectId String   @db.Uuid
+  name      String
+  category  String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name])
+  @@index([name])
+}
+
+model ResearchCategory {
+  id          String            @id @default(uuid()) @db.Uuid
+  slug        String            @unique
+  name        String
+  description String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  articles    ResearchArticle[]
+}
+
+model ResearchArticle {
+  id                String            @id @default(uuid()) @db.Uuid
+  slug              String            @unique
+  title             String
+  summary           String
+  contentMdx        String            @db.Text
+  categoryId        String            @db.Uuid
+  authorName        String
+  authorRole        String
+  readingTimeMin    Int               @default(8)
+  mitreAttackRefs   String[]
+  publicationStatus PublicationStatus @default(DRAFT)
+  publishedAt       DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  category          ResearchCategory  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([categoryId])
+  @@index([publicationStatus])
+}
+
+model ContentSeries {
+  id                String            @id @default(uuid()) @db.Uuid
+  slug              String            @unique
+  title             String
+  subtitle          String
+  description       String            @db.Text
+  totalPlannedPosts Int               @default(20)
+  publicationStatus PublicationStatus @default(PUBLISHED)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  articles          InsightArticle[]
+}
+
+model InsightArticle {
+  id                       String            @id @default(uuid()) @db.Uuid
+  slug                     String            @unique
+  seriesId                 String            @db.Uuid
+  lessonNumber             Int
+  title                    String
+  summary                  String
+  threatExplanation        String            @db.Text
+  realisticExample         String            @db.Text
+  defensiveRecommendations String[]
+  furtherReading           String[]
+  isPlaceholder            Boolean           @default(false)
+  publicationStatus        PublicationStatus @default(PUBLISHED)
+  publishedAt              DateTime?
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  series                   ContentSeries     @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, lessonNumber])
+  @@index([seriesId])
+  @@index([publicationStatus])
+}
+
+model ContactSubmission {
+  id                 String   @id @default(uuid()) @db.Uuid
+  referenceCode      String   @unique
+  fullName           String
+  workEmail          String
+  organisation       String?
+  serviceCategory    String
+  projectDescription String   @db.Text
+  preferredTimeline  String
+  consentAccepted    Boolean
+  ipHash             String?
+  status             String   @default("RECEIVED")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([workEmail])
+  @@index([serviceCategory])
+  @@index([createdAt])
+}
+
+model SiteSetting {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  value       String   @db.Text
+  description String?
+  updatedAt   DateTime @updatedAt
+}

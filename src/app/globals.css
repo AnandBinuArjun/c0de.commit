@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Nohemi";
+  src: local("Nohemi"), url("/fonts/nohemi/Nohemi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Nohemi", var(--font-space-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+@layer base {
+  html {
+    background-color: #030806;
+    color: #F3F8F5;
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #030806;
+    color: #F3F8F5;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -15%, rgba(0, 245, 138, 0.11), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 85% 20%, rgba(11, 56, 36, 0.18), transparent 65%);
+    background-attachment: fixed;
+  }
+
+  /* Custom Studio Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #030806;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #143323;
+    border-radius: 4px;
+    border: 1px solid #204D35;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00C878;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Precision Architectural Grid & Hairline Masking */
+.bg-technical-grid {
+  position: relative;
+  background-size: 48px 48px;
+  background-image:
+    linear-gradient(to right, rgba(32, 77, 53, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(32, 77, 53, 0.16) 1px, transparent 1px);
+}
+
+.bg-technical-grid-masked {
+  background-size: 48px 48px;
+  background-image:
+    linear-gradient(to right, rgba(32, 77, 53, 0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(32, 77, 53, 0.2) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 45%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 45%, transparent 100%);
+}
+
+/* Studio Glass & Specular Surface Primitives */
+.studio-card {
+  position: relative;
+  background: linear-gradient(165deg, rgba(16, 29, 21, 0.92) 0%, rgba(7, 15, 11, 0.96) 100%);
+  border: 1px solid rgba(32, 77, 53, 0.75);
+  box-shadow:
+    inset 0 1px 0 0 rgba(243, 248, 245, 0.06),
+    0 22px 48px -20px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.studio-card:hover {
+  border-color: rgba(0, 245, 138, 0.52);
+  box-shadow:
+    inset 0 1px 0 0 rgba(0, 245, 138, 0.18),
+    0 24px 54px -18px rgba(0, 0, 0, 0.92),
+    0 0 28px -8px rgba(0, 245, 138, 0.22);
+}
+
+/* Top Edge Specular Highlight Line */
+.specular-top {
+  position: relative;
+}
+.specular-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 245, 138, 0.55) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Technical Corner Reticle Accents */
+.corner-brackets {
+  position: relative;
+}
+.corner-brackets::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 0 0,
+    linear-gradient(to bottom, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 0 0,
+    linear-gradient(to left, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 100% 0,
+    linear-gradient(to bottom, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 100% 0,
+    linear-gradient(to right, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 0 100%,
+    linear-gradient(to top, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 0 100%,
+    linear-gradient(to left, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 100% 100%,
+    linear-gradient(to top, rgba(0, 245, 138, 0.45) 2px, transparent 2px) 100% 100%;
+  background-repeat: no-repeat;
+  background-size: 8px 8px;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.corner-brackets:hover::after {
+  opacity: 1;
+}

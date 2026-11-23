@@ -1,0 +1,14 @@
+# CODE.COMMIT — RFC 9116 Vulnerability Disclosure & Security Policy
+# SECURITY x SOFTWARE | Offensive Security. Defensive Engineering. Secure Software.
+
+Contact: https://codecommit.sec/contact
+Contact: mailto:security@codecommit.sec
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://codecommit.sec/.well-known/security.txt
+Policy: https://codecommit.sec/terms
+Hiring: https://codecommit.sec/about
+
+# Disclosure Guidelines:
+# 1. Do not submit live exploit payloads, credentials, or PII through public forms.
+# 2. All testing must remain strictly within authorised scope and Rules of Engagement (RoE).
