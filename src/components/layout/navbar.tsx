@@ -117,14 +117,14 @@ export function Navbar({ onOpenTerminal, onOpenSearch }: NavbarProps) {
             {/* Utility Cluster */}
             <div className="flex items-center gap-1.5 pr-3 border-r border-brand-border/50">
               <Link
-                href="/tools"
+                href="/lab"
                 className={cn(
                   "inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
-                  pathname === "/tools"
+                  (pathname === "/lab" || pathname === "/tools")
                     ? "bg-brand-deep/70 text-brand-primary"
                     : "text-text-muted hover:text-text-primary hover:bg-background-elevated/60"
                 )}
-                title="Zero-Egress Security Utilities Lab"
+                title="Lab: security tools, detections and practice"
               >
                 <Wrench className="h-3.5 w-3.5 text-brand-primary" />
                 <span className="hidden xl:inline">Lab</span>

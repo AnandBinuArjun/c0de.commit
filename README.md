@@ -90,3 +90,20 @@ npm run test:e2e
 - [Deployment Guide (`docs/DEPLOYMENT.md`)](./docs/DEPLOYMENT.md)
 - [Roadmap (`docs/ROADMAP.md`)](./docs/ROADMAP.md)
 - [Agent & Engineering Rules (`AGENTS.md`)](./AGENTS.md)
+
+---
+
+## 7. Lab & Research Extensions
+
+All interactive lab tools run locally in the browser (zero egress). Pure logic lives in `src/lib/security/` and is unit tested.
+
+| Route | Contents |
+| :--- | :--- |
+| `/lab` | Hub page plus live public-repository activity (GitHub API, validated with Zod, revalidated hourly) |
+| `/tools` | Header/CSP, entropy and IOC tools, plus CVSS 3.1, JWT inspector, encoding and hashes, regex/ReDoS, TLS certificate decoder, SPF/DKIM/DMARC checker, IaC linter, STRIDE threat-model builder, attack-path and defence playground, CTF sandbox |
+| `/research/detections` | Reference Sigma, YARA and Suricata rules mapped to ATT&CK |
+| `/research/secure-code-gallery` | Vulnerable versus fixed code by CWE |
+| `/research/glossary` | Searchable security glossary |
+| `/disclosure` | Responsible disclosure policy |
+
+Integrity notes: detection rules and the defence simulation are **illustrative teaching aids**, labelled as such in the UI. They are not validated against production telemetry and are not measurements of real control effectiveness. No PGP key is published yet.

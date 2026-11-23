@@ -15,6 +15,7 @@ import {
   RESEARCH_ARTICLES,
 } from "@/data/research";
 import { PROJECTS_DATA } from "@/data/projects";
+import { ArticleProvenance } from "@/components/research/article-provenance";
 import { CodeBlock } from "@/components/research/code-block";
 import { ResearchReadingChrome } from "@/components/research/research-reading-chrome";
 import { formatDate } from "@/lib/utils";
@@ -177,6 +178,16 @@ export default async function ResearchArticlePage({
                 </div>
               ))}
 
+              <ArticleProvenance
+                publishedAt={article.publishedAt}
+                updatedAt={article.updatedAt}
+                statusLabel={article.statusLabel}
+                repos={relatedProjects.map((p) => ({
+                  name: p.name,
+                  githubUrl: p.githubUrl,
+                  note: p.githubVerificationNote,
+                }))}
+              />
               {/* References & Related Systems */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="rounded-2xl border border-brand-border bg-background-card p-6 space-y-3">

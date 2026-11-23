@@ -66,6 +66,27 @@ export default function ResearchIndexPage() {
         </div>
       </section>
 
+      {/* Lab resources */}
+      <section className="border-b border-brand-border/60 bg-background py-10">
+        <div className="container mx-auto">
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { href: "/research/detections", label: "Detection rule library", body: "Sigma, YARA and Suricata rules mapped to ATT&CK." },
+              { href: "/research/secure-code-gallery", label: "Secure code gallery", body: "Vulnerable versus fixed code by CWE." },
+              { href: "/research/glossary", label: "Glossary", body: "Plain-language security terms." },
+              { href: "/lab", label: "The Lab", body: "Tools, threat modelling and a CTF sandbox." },
+            ].map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="surface-glass block h-full min-h-[44px] rounded-xl p-5 transition-colors hover:border-brand-primary/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50">
+                  <span className="block font-display text-base font-semibold text-text-primary">{l.label}</span>
+                  <span className="mt-1 block text-xs text-text-secondary">{l.body}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* Categories Directory */}
       <section className="border-b border-brand-border/60 bg-background-secondary py-14">
         <div className="container mx-auto space-y-6">
