@@ -1,7 +1,8 @@
-# CODE.COMMIT (`code-commit-web`)
+# CODE.COMMIT 2.0 (`code-commit-web`)
 
-**Brand Statement:** `SECURITY × SOFTWARE`  
-**Primary Headline:** *Find vulnerabilities. Fix them. Build securely.*  
+**Brand Pillars:** `SECURITY × SOFTWARE × RESEARCH`  
+**Hero Statement:** *We break systems. We build better ones.*  
+**Services Statement:** *Find vulnerabilities. Fix them. Build securely.*  
 **Instagram:** [@c0de.commit](https://instagram.com/c0de.commit)  
 **GitHub Ecosystem:** [github.com/AnandBinuArjun](https://github.com/AnandBinuArjun)
 
@@ -9,30 +10,32 @@
 
 ## 1. Overview
 
-CODE.COMMIT is a full-stack cybersecurity and secure software engineering platform combining four integrated experiences:
+CODE.COMMIT 2.0 is a full-stack cybersecurity, software engineering, and research studio platform built with the **"Cybersecurity Engineering Atelier"** design system:
 
-1. **Professional Cybersecurity Services** (`/services` + 6 dedicated service specifications)
-2. **Engineering Product & Project Portfolio** (`/products` & `/work`, featuring **CloudSentinel**, **SENTINEL-IoT**, **Threat Intelligence CTI Analysis**, **TOTAL ENTITY**, **CODEX CYBERSTRIKE**, and more)
-3. **Cybersecurity Research Laboratory** (`/research` + 8 discipline categories, MITRE ATT&CK technique mappings, and code-copy support)
-4. **Technical Education & Knowledge Platform** (`/insights`, hosting the three 20-part `@c0de.commit` Instagram technical curricula)
+1. **Cinematic Editorial Homepage** (`/`) — Featuring the interactive 3-layer `SECURITY × SOFTWARE × RESEARCH` triad visualizer, expandable engineering pillar panels, asymmetric Bento service architecture, flagship **CloudSentinel** showcase, interactive portfolio selector rail, progressive-disclosure engineering lab, connected SVG research constellation, and 6-stage connected methodology timeline.
+2. **Professional Cybersecurity Services** (`/services` + 6 dedicated service specifications with interactive scope configurators and vulnerable-vs-remediated code diff viewers)
+3. **Engineering Product & Project Portfolio** (`/products` & `/work`, featuring all 21 verified GitHub repositories including **CloudSentinel**, **SENTINEL-IoT**, **AegisFlow**, **TOTAL ENTITY**, **CODEX CYBERSTRIKE**, **Vulnerability Management Platform**, and interactive architecture topologies)
+4. **Cybersecurity Research Laboratory** (`/research` + 8 discipline categories, MITRE ATT&CK technique mappings, BibTeX citations, and reading mode)
+5. **Technical Education & Knowledge Platform** (`/insights`, hosting the three 20-part `@c0de.commit` Instagram technical curricula)
+6. **Interactive Security Engineering Lab** (`/tools`, zero-egress client-side CVSS v3.1 calculator, Security Headers & CSP synthesizer, JWT inspector, and MITRE navigator)
 
 ---
 
-## 2. Brand Assets & Logo Preservation Notice
+## 2. Brand Assets & Logo Preservation
 
-In strict compliance with Section 3 and Section 8 of the Master Build Prompt:
-- No generic shield, letter C, or synthetic cloud shield replacement logo has been invented.
-- Drop the original supplied brand and product files into the following locations to automatically populate the `<BrandLogo />` and `<ProductLogo />` slots:
-  - `public/brand/code-commit-logo.svg` (Original dragon-head + circular lock emblem with `CODE.COMMIT` wordmark)
-  - `public/brand/code-commit-mark.svg` (Compact mark)
-  - `public/products/cloudsentinel-logo.svg` (Official CloudSentinel logo)
+All official supplied brand and product files are wired through `<BrandLogo />` and `<ProductLogo />`:
+- `public/brand/code-commit-logo-original.png` (Original high-res dragon-head + circular lock emblem)
+- `public/brand/code-commit-logo.png` (Horizontal emblem + wordmark lockup)
+- `public/brand/code-commit-mark.png` (Compact dragon-lock emblem)
+- `public/brand/code-commit-wordmark.png` (`CODE.COMMIT` wordmark)
+- `public/products/cloudsentinel-logo.png` (Official CloudSentinel logo)
 
 ---
 
 ## 3. Technology Stack
 
-- **Frontend:** Next.js 15 (App Router), TypeScript, React 19, Tailwind CSS, Lucide Icons
-- **Backend & Validation:** Next.js Route Handlers (`/api/contact`, `/api/health`), Zod Schema Validation, Secret-Pattern Screening, Token-Bucket Rate Limiting
+- **Frontend:** Next.js 16 (App Router), TypeScript, React 19, Tailwind CSS, Framer Motion, Lucide Icons
+- **Backend & Validation:** Next.js Route Handlers (`/api/contact`, `/api/health`), Zod Schema Validation, Secret-Pattern Screening, Token-Bucket Rate Limiting, Resend Email Delivery
 - **Database:** PostgreSQL + Prisma ORM (`prisma/schema.prisma`, SQL migration, and deterministic `prisma/seed.ts`)
 - **Testing:** Vitest, React Testing Library, Playwright E2E
 
@@ -78,6 +81,7 @@ npm run test:e2e
 
 ## 6. Documentation Index
 
+- [UI/UX 2.0 Redesign Plan (`docs/UI_UX_REDESIGN_PLAN.md`)](./docs/UI_UX_REDESIGN_PLAN.md)
 - [Product Requirements Document (`docs/PRD.md`)](./docs/PRD.md)
 - [System Architecture (`docs/ARCHITECTURE.md`)](./docs/ARCHITECTURE.md)
 - [Design System (`docs/DESIGN_SYSTEM.md`)](./docs/DESIGN_SYSTEM.md)

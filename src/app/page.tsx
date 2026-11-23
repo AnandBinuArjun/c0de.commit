@@ -11,24 +11,22 @@ import {
   TerminalSquare,
   CheckCircle2,
   GitBranch,
-  BookOpen,
   Shield,
   Wrench,
-  Activity,
-  Terminal,
+  Layers,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/config/site";
 import { SERVICES_DATA } from "@/data/services";
-import { PROJECTS_DATA, getFeaturedProjects } from "@/data/projects";
-import { RESEARCH_ARTICLES } from "@/data/research";
-import { ProcessTimeline } from "@/components/home/process-timeline";
-import { SecurityTelemetryConsole } from "@/components/home/security-telemetry-console";
-import { DisciplineSchematic } from "@/components/home/discipline-schematic";
+import { PROJECTS_DATA } from "@/data/projects";
+import { HeroTriadVisualizer } from "@/components/home/hero-triad-visualizer";
+import { EngineeringPillars } from "@/components/home/engineering-pillars";
+import { PortfolioInteractiveShowcase } from "@/components/home/portfolio-interactive-showcase";
 import { TriadEngineeringWorkbench } from "@/components/home/triad-engineering-workbench";
+import { ResearchTopicNetwork } from "@/components/home/research-topic-network";
+import { ProcessTimeline } from "@/components/home/process-timeline";
 import { TechStackIcon } from "@/components/home/tech-stack-icons";
-import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { FadeInSection } from "@/components/animations/fade-in-section";
-import { BrandLogo, ProductLogo } from "@/components/layout/brand-logo";
+import { ProductLogo } from "@/components/layout/brand-logo";
 
 const SERVICE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Crosshair,
@@ -39,969 +37,630 @@ const SERVICE_ICONS: Record<string, React.ComponentType<{ className?: string }>>
   TerminalSquare,
 };
 
-const CORE_CAPABILITIES = [
+const TECHNOLOGY_CAPABILITY_GROUPS = [
   {
-    code: "01 // OFFENSIVE",
-    category: "OFFENSIVE SECURITY",
-    subtitle: "Authorised Adversarial Verification",
-    schematic: "OFFENSIVE" as const,
+    code: "CAPABILITY // 01",
+    title: "SECURITY ENGINEERING",
     description:
-      "Manual-first offensive evaluations designed to uncover chained business-logic flaws, authentication bypasses, and privilege escalation paths before adversaries do.",
-    items: [
-      "Penetration testing",
-      "Vulnerability assessments",
-      "Application security testing",
+      "Linux, Python, cloud security tooling, detection engineering and secure testing workflows.",
+    technologies: [
+      { name: "Linux", role: "Hardened Host, Kernel & Sensor Runtime" },
+      { name: "Python", role: "Offensive Automation, CTI & DFIR Tooling" },
+      { name: "AWS", role: "STS Read-Only Discovery, IAM, VPC & CloudTrail" },
+      { name: "Microsoft Azure", role: "Entra ID, Managed Identities & Defender Posture" },
     ],
-    badge: "OWASP WSTG · PTES",
-    href: "/services/penetration-testing",
   },
   {
-    code: "02 // DEFENSIVE",
-    category: "DEFENSIVE ENGINEERING",
-    subtitle: "Resilient Posture & Detection",
-    schematic: "DEFENSIVE" as const,
+    code: "CAPABILITY // 02",
+    title: "SOFTWARE ENGINEERING",
     description:
-      "Multi-cloud security architecture, IAM blast-radius reduction, and deterministic telemetry pipelines across AWS, Microsoft Azure, and Linux infrastructure.",
-    items: [
-      "Cloud security",
-      "Security posture assessments",
-      "Detection engineering",
+      "TypeScript, React, Next.js, FastAPI, PostgreSQL and memory-safe API architecture.",
+    technologies: [
+      { name: "TypeScript", role: "Strict Type-Safe Full-Stack Architecture" },
+      { name: "React", role: "Interactive Telemetry & Control-Plane UI" },
+      { name: "Next.js", role: "App Router, Server Actions & Edge Headers" },
+      { name: "FastAPI", role: "High-Assurance Async Python Microservices" },
+      { name: "PostgreSQL", role: "Relational Data, Graph Storage & Row-Level Security" },
     ],
-    badge: "CIS · NIST · MITRE ATT&CK",
-    href: "/services/cloud-security",
   },
   {
-    code: "03 // ENGINEERING",
-    category: "SECURE DEVELOPMENT",
-    subtitle: "Defence-in-Depth Software Systems",
-    schematic: "DEVELOPMENT" as const,
+    code: "CAPABILITY // 03",
+    title: "RESEARCH & INFRASTRUCTURE",
     description:
-      "Full-stack engineering of high-assurance web platforms, APIs, and custom security control planes built with strict schema validation and least privilege.",
-    items: [
-      "Secure web applications",
-      "API engineering",
-      "Security-focused systems",
+      "Docker, cloud platforms, data analysis, threat intelligence and experimental security systems.",
+    technologies: [
+      { name: "Docker", role: "Egress-Isolated Sandbox & Honeypot Containers" },
+      { name: "GitHub Actions", role: "Automated SAST, SARIF & CI/CD Security Gates" },
     ],
-    badge: "OWASP ASVS LEVEL 2+",
-    href: "/services/secure-development",
   },
-] as const;
-
-const CURATED_TECH_STACK = [
-  { name: "Python", code: "PY-3.12", role: "Security Automation, CTI & DFIR" },
-  { name: "TypeScript", code: "TS-5.7", role: "Strict Type-Safe Engineering" },
-  { name: "React", code: "UI-19", role: "Interactive Telemetry Interfaces" },
-  { name: "Next.js", code: "NXT-16", role: "App Router & Server Architecture" },
-  { name: "FastAPI", code: "API-ASYNC", role: "High-Assurance Python APIs" },
-  { name: "PostgreSQL", code: "PG-16+RLS", role: "Relational Data & Graph Storage" },
-  { name: "Docker", code: "OCI-SANDBOX", role: "Isolated Workload Containment" },
-  { name: "Linux", code: "KERNEL-SEC", role: "Hardened Host & Sensor Runtime" },
-  { name: "AWS", code: "STS-OIDC", role: "IAM, CloudTrail, VPC & KMS Security" },
-  { name: "Microsoft Azure", code: "ENTRA-RBAC", role: "Entra ID, Defender & NSG Posture" },
-  { name: "GitHub Actions", code: "CI-SAST", role: "DevSecOps CI/CD Security Gates" },
 ] as const;
 
 export default function HomePage() {
-  const featuredProjects = getFeaturedProjects();
-  const featuredResearch = RESEARCH_ARTICLES.slice(0, 6);
   const cloudSentinel = PROJECTS_DATA.find((p) => p.slug === "cloudsentinel");
-  const primaryResearch = featuredResearch[0];
-  const secondaryResearch = featuredResearch.slice(1, 6);
+  const featuredPentestService =
+    SERVICES_DATA.find((s) => s.slug === "penetration-testing") || SERVICES_DATA[0];
+  const otherServices = SERVICES_DATA.filter((s) => s.slug !== "penetration-testing");
 
   return (
     <div className="space-y-0">
-      {/* SECTION 1 — ARCHITECTURAL BLUEPRINT HERO */}
-      <section className="section-divider relative overflow-hidden pt-6 pb-16 sm:pt-10 sm:pb-24">
+      {/* =====================================================================
+          SECTION 01 — CINEMATIC EDITORIAL HERO (Surface A: Open Editorial)
+         ===================================================================== */}
+      <section className="surface-editorial section-divider relative overflow-hidden pt-10 pb-20 sm:pt-16 sm:pb-28 lg:pt-20 lg:pb-32">
         <div className="pointer-events-none absolute inset-0 bg-technical-grid-masked" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-radial-glow" />
 
         <div className="container relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-          {/* Outer Architectural Blueprint Frame */}
-          <div className="rounded-3xl border border-brand-border/80 bg-[#050C08]/75 backdrop-blur-xl shadow-[0_30px_80px_-25px_rgba(0,0,0,0.95)] overflow-hidden">
-            {/* Blueprint Frame Top Metadata Rail */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-border/70 bg-background-elevated/80 px-4 py-2.5 sm:px-7 font-mono text-[11px]">
-              <div className="flex items-center gap-2.5 text-brand-primary">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-primary opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-primary" />
-                </span>
-                <span className="font-semibold tracking-wider">
-                  [ SYSTEM ONLINE ] — SECURITY ENGINEERING
-                </span>
-              </div>
-              <div className="hidden sm:flex items-center gap-4 text-text-muted">
-                <span>{SITE_CONFIG.brandStatement}</span>
-                <span>·</span>
-                <span className="text-text-secondary">{SITE_CONFIG.alternativePositioning}</span>
-                <span>·</span>
-                <span className="text-brand-primary">VERIFIED BUILD v1.0</span>
-              </div>
-            </div>
-
-            {/* Split Blueprint Hero Body */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-brand-border/70">
-              {/* Left 7 Columns: Editorial Display Statement + CTAs */}
-              <div className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 xl:p-12 space-y-8">
-                <div className="space-y-6">
-                  {/* Brand Emblem Badge + Tagline */}
-                  <div className="inline-flex items-center gap-3 rounded-xl border border-brand-border/80 bg-background-card/90 px-3.5 py-2">
-                    <img
-                      src="/brand/code-commit-mark.png"
-                      alt="CODE.COMMIT Emblem"
-                      className="h-6 w-6 object-contain"
-                    />
-                    <span className="font-mono text-xs font-semibold tracking-widest text-text-primary">
-                      CODE<span className="text-brand-primary">.</span>COMMIT STUDIO
-                    </span>
-                    <span className="rounded bg-brand-deep px-2 py-0.5 font-mono text-[10px] text-brand-primary">
-                      UK / GLOBAL
-                    </span>
-                  </div>
-
-                  {/* Primary Headline */}
-                  <h1 className="font-display text-[2.4rem] font-bold leading-[1.03] tracking-tight text-text-primary sm:text-5xl md:text-6xl xl:text-[4.4rem]">
-                    Find vulnerabilities.
-                    <br />
-                    <span className="bg-gradient-to-r from-brand-primary via-[#69FFB8] to-brand-secondary bg-clip-text text-transparent">
-                      Fix them.
-                    </span>
-                    <br />
-                    Build securely.
-                  </h1>
-
-                  <p className="max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg">
-                    Offensive security, application security, cloud defence and secure software
-                    engineering — built around practical technical expertise.
-                  </p>
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-12">
+            {/* Left Side (~52% / 6 Cols): Editorial Brand Statement */}
+            <div className="lg:col-span-6 space-y-8">
+              <div className="space-y-5">
+                <div className="inline-flex items-center gap-2.5 rounded-full border border-brand-border/70 bg-background-elevated/80 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-brand-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-primary shadow-[0_0_8px_#00F58A]" />
+                  <span>INDEPENDENT SECURITY &amp; SOFTWARE ENGINEERING STUDIO</span>
                 </div>
 
-                {/* Action Dock */}
-                <div className="space-y-6">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                    <Link
-                      href="/services"
-                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
-                    >
-                      <span>Explore Services</span>
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                      href="/work"
-                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl border border-brand-border bg-background-card px-6 py-4 text-xs sm:text-sm font-semibold text-text-primary transition-all hover:border-brand-primary hover:text-brand-primary"
-                    >
-                      <span>View Our Work</span>
-                      <span className="rounded bg-brand-deep px-2 py-0.5 font-mono text-[10px] text-brand-primary">
-                        {PROJECTS_DATA.length}
-                      </span>
-                    </Link>
-                    <Link
-                      href="/tools"
-                      className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border/70 bg-background-elevated/80 px-5 py-4 font-mono text-xs text-text-secondary hover:border-brand-primary hover:text-brand-primary transition-colors"
-                    >
-                      <Wrench className="h-3.5 w-3.5 text-brand-primary" />
-                      <span>Security Lab Tools</span>
-                    </Link>
-                  </div>
+                <h1 className="font-display text-hero-display font-bold text-text-primary">
+                  We break systems.
+                  <br />
+                  <span className="bg-gradient-to-r from-brand-primary via-[#69FFB8] to-brand-secondary bg-clip-text text-transparent">
+                    We build better ones.
+                  </span>
+                </h1>
 
-                  {/* Architectural Proof Footnote */}
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-brand-border/50 pt-5 font-mono text-xs text-text-muted">
-                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
-                      <span>Signed RoE Penetration Testing</span>
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
-                      <span>AWS & Azure Posture Engineering</span>
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
-                      <span>Zero-Trust Full-Stack Builds</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right 5 Columns: Embedded Interactive Control Plane */}
-              <div className="lg:col-span-5 bg-background-secondary/60 p-4 sm:p-6 flex flex-col justify-center">
-                <SecurityTelemetryConsole />
-              </div>
-            </div>
-
-            {/* Bottom 4-Cell Blueprint Telemetry Ledger Bar */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 divide-x divide-brand-border/70 border-t border-brand-border/70 bg-background-elevated/60">
-              <Link
-                href="/work"
-                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
-              >
-                <div>
-                  <p className="font-mono text-2xl sm:text-3xl font-bold text-brand-primary">
-                    {PROJECTS_DATA.length}
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
-                    Verified GitHub Systems
-                  </p>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-
-              <Link
-                href="/services"
-                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
-              >
-                <div>
-                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
-                    06
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
-                    Core Security Practices
-                  </p>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-
-              <Link
-                href="/research"
-                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
-              >
-                <div>
-                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
-                    08
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
-                    Research Lab Disciplines
-                  </p>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-
-              <Link
-                href="/insights"
-                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
-              >
-                <div>
-                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
-                    60
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
-                    Curriculum Lesson Slots
-                  </p>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 2 — CORE CAPABILITIES WITH CUSTOM SVG ARCHITECTURAL SCHEMATICS */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-24">
-        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-8 space-y-3">
-              <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-primary">
-                <span>[ 01 // CORE CAPABILITIES & ENGINEERING ARCHITECTURE ]</span>
-              </div>
-              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                Three engineering disciplines. One unified security posture.
-              </h2>
-            </div>
-            <div className="lg:col-span-4">
-              <p className="text-sm leading-relaxed text-text-secondary">
-                Security vulnerabilities rarely stay confined to a single layer. We bridge offensive
-                discovery, defensive cloud architecture, and secure software engineering.
-              </p>
-            </div>
-          </FadeInSection>
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {CORE_CAPABILITIES.map((cap, idx) => (
-              <FadeInSection key={cap.category} delay={idx * 0.06}>
-                <SpotlightCard className="flex h-full flex-col justify-between p-6 sm:p-8">
-                  <div className="space-y-6">
-                    {/* Header Metadata */}
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold tracking-wider text-brand-primary">
-                        {cap.code}
-                      </span>
-                      <span className="rounded-full border border-brand-border bg-background-elevated px-3 py-1 font-mono text-[10px] text-text-secondary">
-                        {cap.badge}
-                      </span>
-                    </div>
-
-                    {/* Custom Vector Schematic Diagram */}
-                    <DisciplineSchematic variant={cap.schematic} />
-
-                    <div className="space-y-2">
-                      <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-brand-primary">
-                        {cap.category}
-                      </p>
-                      <h3 className="font-display text-2xl font-bold text-text-primary">
-                        {cap.subtitle}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary">
-                        {cap.description}
-                      </p>
-                    </div>
-
-                    <ul className="space-y-2 border-t border-brand-border/60 pt-4">
-                      {cap.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-center justify-between rounded-xl border border-brand-border/50 bg-background-elevated/60 px-3.5 py-2.5 text-xs sm:text-sm font-medium text-text-primary"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" />
-                            <span>{item}</span>
-                          </div>
-                          <span className="font-mono text-[10px] text-text-muted">VERIFIED</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-7 border-t border-brand-border/50 pt-4">
-                    <Link
-                      href={cap.href}
-                      className="group inline-flex items-center gap-2 font-mono text-xs font-semibold text-brand-primary"
-                    >
-                      <span>Inspect discipline specification</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
-                </SpotlightCard>
-              </FadeInSection>
-            ))}
-          </div>
-
-          {/* Interactive SECURITY x SOFTWARE x RESEARCH Triad Convergence Workbench */}
-          <FadeInSection delay={0.12}>
-            <TriadEngineeringWorkbench />
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* SECTION 3 — PROFESSIONAL SERVICES (ASYMMETRICAL STICKY EDITORIAL LAYOUT) */}
-      <section className="section-divider bg-background py-16 sm:py-24">
-        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-            {/* Left 4 Columns: Sticky Editorial Anchor */}
-            <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-28 space-y-6">
-                <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-primary">
-                  <span>[ 02 // SERVICES MATRIX ]</span>
-                </div>
-
-                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
-                  Practical security assessments and engineering engagements.
-                </h2>
-
-                <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
-                  Every engagement is executed under explicit written authorisation and produces
-                  reproducible Proof-of-Concept evidence, framework-specific code patches, and
-                  post-remediation verification retesting.
+                <p className="font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.26em] text-brand-primary">
+                  SECURITY × SOFTWARE × RESEARCH
                 </p>
 
-                <div className="rounded-2xl border border-brand-border bg-background-card p-5 space-y-3">
-                  <p className="font-mono text-xs font-bold uppercase tracking-wider text-brand-primary">
-                    Engagement Guarantees
-                  </p>
-                  <ul className="space-y-2 text-xs text-text-secondary">
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
-                      <span>Manual-first assessment (never raw scanner dumps)</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
-                      <span>Direct developer & architect remediation walkthroughs</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
-                      <span>Verification retest included after fixes ship</span>
-                    </li>
-                  </ul>
-                </div>
+                <p className="max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg lg:text-xl">
+                  From adversarial security testing and secure software engineering to cloud defence
+                  and original research, CODE.COMMIT transforms complex technical challenges into
+                  resilient digital systems.
+                </p>
+              </div>
 
-                <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-background shadow-neon-sm hover:bg-brand-secondary"
-                  >
-                    <span>Initialize Project Scope</span>
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href="/services"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-card px-6 py-3.5 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary"
-                  >
-                    <span>Compare All 6 Services</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+              {/* Primary & Secondary CTAs */}
+              <div className="flex flex-col gap-3.5 sm:flex-row sm:flex-wrap sm:items-center">
+                <Link
+                  href="/services"
+                  className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background transition-all hover:bg-brand-secondary"
+                >
+                  <span>Explore Our Expertise</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  href="/work"
+                  className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl border border-brand-border/80 bg-background-card/75 px-7 py-4 text-xs sm:text-sm font-semibold text-text-primary transition-all hover:border-brand-primary/60 hover:text-brand-primary"
+                >
+                  <span>Discover Our Work</span>
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </div>
+
+              {/* Secondary Positioning Footnote */}
+              <div className="border-t border-brand-border/40 pt-6 flex flex-wrap items-center justify-between gap-4">
+                <p className="font-mono text-xs tracking-wider text-text-secondary">
+                  Research-driven. Engineering-led. Security-first.
+                </p>
+                <span className="font-mono text-xs text-text-muted">
+                  [ SYSTEM ONLINE ] · {PROJECTS_DATA.length} VERIFIED REPOSITORIES
+                </span>
               </div>
             </div>
 
-            {/* Right 8 Columns: 2-Column Precision Service Specification Cards */}
-            <div className="lg:col-span-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {SERVICES_DATA.map((service, idx) => {
-                const IconComponent = SERVICE_ICONS[service.iconName] || ShieldCheck;
-                return (
-                  <FadeInSection key={service.slug} delay={idx * 0.04}>
-                    <SpotlightCard
-                      as="article"
-                      className="flex h-full flex-col justify-between p-6 sm:p-7"
-                    >
-                      <div className="space-y-5">
-                        <div className="flex items-center justify-between border-b border-brand-border/60 pb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/80 text-brand-primary">
-                              <IconComponent className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <span className="font-mono text-[10px] font-bold text-brand-primary block">
-                                SPEC // 0{idx + 1}
-                              </span>
-                              <span className="font-mono text-[10px] text-text-muted">
-                                {service.capabilityGroup}
-                              </span>
-                            </div>
-                          </div>
-                          <Link
-                            href={`/contact?service=${service.slug}`}
-                            className="rounded-lg border border-brand-border bg-background-elevated px-2.5 py-1 font-mono text-[10px] text-text-secondary hover:border-brand-primary hover:text-brand-primary"
-                          >
-                            Scope →
-                          </Link>
-                        </div>
-
-                        <div className="space-y-2">
-                          <h3 className="font-display text-xl font-bold text-text-primary">
-                            <Link
-                              href={`/services/${service.slug}`}
-                              className="hover:text-brand-primary transition-colors"
-                            >
-                              {service.shortTitle}
-                            </Link>
-                          </h3>
-                          <p className="text-sm leading-relaxed text-text-secondary">
-                            {service.shortDescription}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2 pt-1">
-                          <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
-                            Key Engineering Deliverables
-                          </p>
-                          <ul className="space-y-1.5 text-xs text-text-secondary">
-                            {service.deliverables.slice(0, 3).map((deliv) => (
-                              <li key={deliv} className="flex items-start gap-2">
-                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
-                                <span>{deliv}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="mt-6 flex items-center justify-between border-t border-brand-border/50 pt-4">
-                        <Link
-                          href={`/services/${service.slug}`}
-                          className="group inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-primary"
-                        >
-                          <span>Full Service Architecture</span>
-                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                        </Link>
-                      </div>
-                    </SpotlightCard>
-                  </FadeInSection>
-                );
-              })}
+            {/* Right Side (~48% / 6 Cols): Interactive 3-Layer Engineering Visualization */}
+            <div className="lg:col-span-6">
+              <HeroTriadVisualizer />
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 4 — FEATURED ENGINEERING WORK (ASYMMETRICAL BENTO SHOWCASE) */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-24">
+      {/* =====================================================================
+          SECTION 02 — SECURITY × SOFTWARE × RESEARCH SHOWCASE
+         ===================================================================== */}
+      <section className="section-divider bg-background-secondary/60 py-20 sm:py-28">
         <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-3xl space-y-2.5">
-              <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
-                [ 03 // FEATURED ENGINEERING WORK & PLATFORMS ]
+          <FadeInSection className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div className="max-w-3xl space-y-3">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                01 // THE THREE STUDIO PILLARS
               </p>
-              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                Verified security systems from our GitHub portfolio.
+              <h2 className="font-display text-section-display font-bold text-text-primary">
+                Find vulnerabilities. Fix them. Build securely.
               </h2>
-              <p className="text-sm sm:text-base text-text-secondary">
-                Transparent engineering documentation across {PROJECTS_DATA.length} public
-                repositories on{" "}
-                <a
-                  href={SITE_CONFIG.githubProfileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-brand-primary underline"
-                >
-                  github.com/AnandBinuArjun
-                </a>
-                . Every system distinguishes implemented features from planned roadmap items.
-              </p>
             </div>
-            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-              <Link
-                href="/products"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-card px-5 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary"
-              >
-                <span>Flagship Products</span>
-              </Link>
-              <Link
-                href="/work"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-background hover:bg-brand-secondary shadow-neon-sm"
-              >
-                <span>Explore All {PROJECTS_DATA.length} Systems</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-text-secondary">
+              Select or focus any discipline panel below to explore how offensive verification,
+              full-stack engineering, and original research operate together.
+            </p>
           </FadeInSection>
 
-          {/* Flagship CloudSentinel Command Showcase */}
-          {cloudSentinel && (
-            <FadeInSection>
-              <SpotlightCard className="specular-top border-brand-primary/45 p-6 sm:p-9 lg:p-10">
-                <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-                  <div className="lg:col-span-7 space-y-5">
-                    <div className="flex flex-wrap items-center gap-3">
+          <FadeInSection delay={0.06}>
+            <EngineeringPillars />
+          </FadeInSection>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECTION 03 — SELECTED CAPABILITIES (BENTO SERVICES SHOWCASE)
+         ===================================================================== */}
+      <section className="section-divider bg-background py-20 sm:py-28">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-2xl space-y-3">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                02 // SELECTED CAPABILITIES &amp; SERVICES
+              </p>
+              <h2 className="font-display text-section-display font-bold text-text-primary">
+                Authorised security assessments and custom software builds.
+              </h2>
+            </div>
+            <Link
+              href="/services"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border/70 bg-background-card/80 px-5 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary hover:text-brand-primary transition-colors"
+            >
+              <span>View All 6 Service Specifications</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </FadeInSection>
+
+          {/* Varied Editorial Bento Grid: Featured 2x Card (Penetration Testing) + 5 Varied Cards */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-12">
+            {/* Featured Service: Penetration Testing (Spans 8 Columns on Desktop) */}
+            {featuredPentestService && (
+              <FadeInSection className="lg:col-span-8">
+                <article className="surface-immersive flex h-full flex-col justify-between rounded-3xl p-7 sm:p-10 space-y-8">
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
+                    <div className="lg:col-span-7 space-y-4">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-brand-deep px-3.5 py-1 font-mono text-xs text-brand-primary">
+                        <Crosshair className="h-3.5 w-3.5" />
+                        <span>FEATURED CAPABILITY · OFFENSIVE SECURITY</span>
+                      </div>
+
+                      <h3 className="font-display text-2xl font-bold text-text-primary sm:text-4xl">
+                        <Link
+                          href={`/services/${featuredPentestService.slug}`}
+                          className="hover:text-brand-primary transition-colors"
+                        >
+                          {featuredPentestService.title}
+                        </Link>
+                      </h3>
+
+                      <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
+                        {featuredPentestService.shortDescription}
+                      </p>
+
+                      <ul className="space-y-2 pt-1 text-xs sm:text-sm text-text-primary">
+                        {featuredPentestService.deliverables.slice(0, 3).map((d) => (
+                          <li key={d} className="flex items-center gap-2.5">
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" />
+                            <span>{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Architectural Visual for Penetration Testing */}
+                    <div className="lg:col-span-5">
+                      <div className="rounded-2xl border border-brand-border/60 bg-[#040907]/90 p-4 space-y-3">
+                        <div className="flex items-center justify-between font-mono text-[10px] text-brand-primary">
+                          <span>AUTHORISED ROE METHODOLOGY</span>
+                          <span>OWASP WSTG</span>
+                        </div>
+                        <svg
+                          viewBox="0 0 260 135"
+                          fill="none"
+                          className="w-full h-32"
+                          aria-hidden="true"
+                        >
+                          <rect x="12" y="18" width="70" height="28" rx="5" fill="#0B1710" stroke="#00F58A" strokeWidth="1.2" />
+                          <text x="24" y="35" fill="#00F58A" fontSize="8.5" fontFamily="monospace">
+                            01 RECON
+                          </text>
+                          <line x1="82" y1="32" x2="108" y2="32" stroke="#00F58A" strokeWidth="1.3" />
+                          <rect x="108" y="18" width="138" height="28" rx="5" fill="#0B3824" stroke="#00F58A" strokeWidth="1.4" />
+                          <text x="120" y="35" fill="#F3F8F5" fontSize="8.5" fontFamily="monospace">
+                            02 MANUAL BOLA &amp; AUTH
+                          </text>
+                          <line x1="177" y1="46" x2="177" y2="78" stroke="#00F58A" strokeWidth="1.3" />
+                          <rect x="108" y="78" width="138" height="32" rx="5" fill="#0B1710" stroke="#00F58A" strokeWidth="1.3" />
+                          <text x="120" y="97" fill="#00F58A" fontSize="8.5" fontFamily="monospace">
+                            03 POC &amp; RETEST SIGN
+                          </text>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-t border-brand-border/50 pt-5">
+                    <Link
+                      href={`/services/${featuredPentestService.slug}`}
+                      className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-6 py-3 text-xs font-mono font-bold uppercase tracking-wider text-background hover:bg-brand-secondary transition-colors"
+                    >
+                      <span>Explore Penetration Testing</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    <Link
+                      href={`/contact?service=${featuredPentestService.slug}`}
+                      className="font-mono text-xs text-text-secondary hover:text-brand-primary"
+                    >
+                      Scope Authorised Engagement →
+                    </Link>
+                  </div>
+                </article>
+              </FadeInSection>
+            )}
+
+            {/* Supporting 5 Services in Varied Bento Spans (4 Cols / 4 Cols / 4 Cols / 4 Cols / 4 Cols) */}
+            {otherServices.map((service, idx) => {
+              const IconComponent = SERVICE_ICONS[service.iconName] || ShieldCheck;
+              const colSpanClass = idx === 0 ? "lg:col-span-4" : "lg:col-span-3";
+
+              return (
+                <FadeInSection
+                  key={service.slug}
+                  delay={(idx + 1) * 0.04}
+                  className={colSpanClass}
+                >
+                  <article className="surface-glass flex h-full flex-col justify-between rounded-3xl p-6 sm:p-7 space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-primary/35 bg-brand-deep/70 text-brand-primary">
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+                          {service.capabilityGroup}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h3 className="font-display text-xl font-bold text-text-primary">
+                          <Link
+                            href={`/services/${service.slug}`}
+                            className="hover:text-brand-primary transition-colors"
+                          >
+                            {service.shortTitle}
+                          </Link>
+                        </h3>
+                        <p className="text-sm leading-relaxed text-text-secondary">
+                          {service.shortDescription}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-brand-border/40 pt-4">
+                      <Link
+                        href={`/services/${service.slug}`}
+                        className="group inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-brand-primary"
+                      >
+                        <span>Explore Service</span>
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    </div>
+                  </article>
+                </FadeInSection>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECTION 04 — FLAGSHIP PRODUCT SHOWCASE: CLOUDSENTINEL
+         ===================================================================== */}
+      {cloudSentinel && (
+        <section className="section-divider bg-background-secondary/70 py-20 sm:py-28">
+          <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+            <FadeInSection className="space-y-3">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                03 // FLAGSHIP PRODUCT SHOWCASE
+              </p>
+              <h2 className="font-display text-section-display font-bold text-text-primary">
+                Security across clouds.{" "}
+                <span className="text-brand-primary">Clarity across complexity.</span>
+              </h2>
+            </FadeInSection>
+
+            <FadeInSection delay={0.06}>
+              <div className="surface-immersive specular-top rounded-3xl p-7 sm:p-10 lg:p-12">
+                <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+                  {/* Left 6 Columns: Product Identity, Narrative & Actions */}
+                  <div className="lg:col-span-6 space-y-6">
+                    <div className="flex flex-wrap items-center gap-4">
                       <ProductLogo
                         productName="CloudSentinel"
                         assetPath="/products/cloudsentinel-logo.png"
                       />
-                      <span className="rounded-full border border-brand-primary/40 bg-brand-deep px-3.5 py-1 font-mono text-[11px] text-brand-primary">
-                        FLAGSHIP MULTI-CLOUD CSPM · v1.0.0 VERIFIED
+                      <span className="rounded-full border border-brand-primary/40 bg-brand-deep px-3.5 py-1 font-mono text-xs text-brand-primary">
+                        v1.0.0 VERIFIED · AWS &amp; MICROSOFT AZURE
                       </span>
                     </div>
 
-                    <h3 className="font-display text-2xl font-bold text-text-primary sm:text-3xl">
-                      CloudSentinel — Hybrid Cloud Security Platform for AWS & Microsoft Azure
-                    </h3>
-
-                    <p className="text-sm leading-relaxed text-text-secondary sm:text-base">
+                    <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
                       {cloudSentinel.solutionOverview}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 pt-1">
+                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                      {[
+                        "AWS STS & Azure Managed Identity Discovery",
+                        "18 Deterministic Cloud Posture Rules",
+                        "9 MITRE ATT&CK Log Threat Detectors",
+                        "Transparent 0–100 Contextual Risk Scoring",
+                        "JSON / CSV / PDF Compliance Evidence Reports",
+                        "Separation-of-Duties Approval-Gated Remediation",
+                      ].map((item) => (
+                        <div
+                          key={item}
+                          className="flex items-center gap-2.5 rounded-xl border border-brand-border/50 bg-background/55 px-3.5 py-2.5 text-xs font-medium text-text-primary"
+                        >
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
                       <Link
                         href="/products/cloudsentinel"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-background hover:bg-brand-secondary"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 py-3.5 text-xs font-mono font-bold uppercase tracking-wider text-background hover:bg-brand-secondary transition-colors"
                       >
-                        <span>Inspect CloudSentinel Architecture</span>
+                        <span>Explore CloudSentinel Platform</span>
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                       <a
                         href={cloudSentinel.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-elevated px-4 py-3.5 font-mono text-xs text-text-primary hover:border-brand-primary"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-elevated px-5 py-3.5 font-mono text-xs text-text-primary hover:border-brand-primary"
                       >
-                        <GitBranch className="h-3.5 w-3.5 text-brand-primary" />
-                        <span>AnandBinuArjun/cloundsentinel</span>
+                        <GitBranch className="h-4 w-4 text-brand-primary" />
+                        <span>github.com/AnandBinuArjun/cloundsentinel</span>
+                        <ArrowUpRight className="h-3.5 w-3.5" />
                       </a>
                     </div>
                   </div>
 
-                  <div className="lg:col-span-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-2xl font-bold text-brand-primary">18</span>
-                      <p className="font-display text-xs font-bold text-text-primary">
-                        Deterministic Posture Rules
-                      </p>
-                      <p className="text-[11px] text-text-muted">
-                        AWS STS & Azure Managed Identity read-only evaluators
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-2xl font-bold text-brand-primary">09</span>
-                      <p className="font-display text-xs font-bold text-text-primary">
-                        MITRE ATT&CK Log Rules
-                      </p>
-                      <p className="text-[11px] text-text-muted">
-                        CloudTrail & Azure Activity Log threat detection
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-2xl font-bold text-brand-primary">21</span>
-                      <p className="font-display text-xs font-bold text-text-primary">
-                        PostgreSQL 16 RLS Entities
-                      </p>
-                      <p className="text-[11px] text-text-muted">
-                        Strict multi-tenant row-level security isolation
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-2xl font-bold text-brand-primary">SoD</span>
-                      <p className="font-display text-xs font-bold text-text-primary">
-                        Approval-Gated Fixes
-                      </p>
-                      <p className="text-[11px] text-text-muted">
-                        Enforces approver != proposer separation of duties
-                      </p>
+                  {/* Right 6 Columns: Layered Enterprise Console & Architecture Preview */}
+                  <div className="lg:col-span-6">
+                    <div className="rounded-2xl border border-brand-border/80 bg-[#040907]/95 p-5 shadow-2xl space-y-5">
+                      {/* Console Window Header */}
+                      <div className="flex items-center justify-between border-b border-brand-border/60 pb-3.5">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2.5 w-2.5 rounded-full bg-brand-primary" />
+                          <span className="font-mono text-xs font-bold text-text-primary">
+                            CLOUDSENTINEL // PROOF-BEFORE-ACTION ENGINE
+                          </span>
+                        </div>
+                        <span className="rounded bg-brand-deep px-2 py-0.5 font-mono text-[10px] text-brand-primary">
+                          READ-ONLY DEFAULT
+                        </span>
+                      </div>
+
+                      {/* 4-Stage Architecture Preview */}
+                      <div className="space-y-3">
+                        {cloudSentinel.architectureDiagram.nodes.map((node, idx) => (
+                          <div
+                            key={node.id}
+                            className="flex items-start justify-between gap-4 rounded-xl border border-brand-border/60 bg-background-elevated/80 p-3.5"
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-[10px] font-bold text-brand-primary">
+                                  0{idx + 1} // {node.layer.toUpperCase()}
+                                </span>
+                              </div>
+                              <h4 className="font-display text-sm font-bold text-text-primary">
+                                {node.label}
+                              </h4>
+                              <p className="text-xs text-text-secondary">{node.detail}</p>
+                            </div>
+                            <span className="shrink-0 rounded border border-brand-border bg-background px-2 py-0.5 font-mono text-[10px] text-brand-primary">
+                              VERIFIED
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </SpotlightCard>
+              </div>
             </FadeInSection>
-          )}
-
-          {/* Asymmetrical Bento Portfolio Grid (First 2 cards span 6 cols each on lg; next 6 span 4 cols each) */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-12">
-            {featuredProjects
-              .filter((p) => p.slug !== "cloudsentinel")
-              .map((project, idx) => {
-                const detailHref = project.isProduct
-                  ? `/products/${project.slug}`
-                  : `/work/${project.slug}`;
-                const isWideBento = idx < 2;
-
-                return (
-                  <FadeInSection
-                    key={project.slug}
-                    delay={idx * 0.04}
-                    className={isWideBento ? "lg:col-span-6" : "lg:col-span-4"}
-                  >
-                    <SpotlightCard
-                      as="article"
-                      className="flex h-full flex-col justify-between p-6 sm:p-7"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="rounded-full border border-brand-primary/35 bg-brand-deep/85 px-3 py-0.5 font-mono text-[11px] text-brand-primary">
-                            {project.category}
-                          </span>
-                          <span className="font-mono text-[10px] text-text-muted">
-                            {project.statusLabel}
-                          </span>
-                        </div>
-
-                        <div className="space-y-2">
-                          <h3 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
-                            <Link
-                              href={detailHref}
-                              className="hover:text-brand-primary transition-colors"
-                            >
-                              {project.name}
-                            </Link>
-                          </h3>
-                          <p className="text-sm leading-relaxed text-text-secondary">
-                            {project.shortDescription}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2 border-t border-brand-border/50 pt-3.5">
-                          <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
-                            Implemented & Verified Architecture
-                          </p>
-                          <ul className="space-y-1.5 text-xs text-text-secondary">
-                            {project.implementedFeatures
-                              .slice(0, isWideBento ? 3 : 2)
-                              .map((feat) => (
-                                <li key={feat} className="flex items-start gap-2">
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
-                                  <span>{feat}</span>
-                                </li>
-                              ))}
-                          </ul>
-                        </div>
-
-                        <div className="flex flex-wrap gap-1.5 pt-2">
-                          {project.technologies.slice(0, 6).map((tech) => (
-                            <span
-                              key={tech}
-                              className="rounded-md border border-brand-border/70 bg-background-elevated px-2.5 py-0.5 font-mono text-[11px] text-text-secondary"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="mt-6 flex items-center justify-between border-t border-brand-border/50 pt-4">
-                        <Link
-                          href={detailHref}
-                          className="group inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-brand-primary"
-                        >
-                          <span>Inspect System Blueprint</span>
-                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                        </Link>
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-text-primary"
-                        >
-                          <GitBranch className="h-3.5 w-3.5" />
-                          <span>GitHub</span>
-                        </a>
-                      </div>
-                    </SpotlightCard>
-                  </FadeInSection>
-                );
-              })}
           </div>
+        </section>
+      )}
+
+      {/* =====================================================================
+          SECTION 05 — SELECTED ENGINEERING WORK (INTERACTIVE PORTFOLIO RAIL)
+         ===================================================================== */}
+      <section className="section-divider bg-background py-20 sm:py-28">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-3xl space-y-3">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                04 // SELECTED ENGINEERING WORK
+              </p>
+              <h2 className="font-display text-section-display font-bold text-text-primary">
+                Verified open-source platforms and security tooling.
+              </h2>
+              <p className="text-sm sm:text-base text-text-secondary">
+                Select any system from the index below to inspect its architecture topology,
+                verified repository capabilities, and technology stack.
+              </p>
+            </div>
+            <Link
+              href="/work"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 py-3.5 text-xs font-mono font-bold uppercase tracking-wider text-background hover:bg-brand-secondary transition-colors"
+            >
+              <span>Browse All {PROJECTS_DATA.length} GitHub Repositories</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </FadeInSection>
+
+          <FadeInSection delay={0.06}>
+            <PortfolioInteractiveShowcase />
+          </FadeInSection>
         </div>
       </section>
 
-      {/* SECTION 5 — SECURITY RESEARCH LAB (EDITORIAL SPOTLIGHT + LEDGER FEED) */}
-      <section className="section-divider bg-background py-16 sm:py-24">
+      {/* =====================================================================
+          SECTION 06 — INSIDE THE ENGINEERING LAB (PROGRESSIVE WORKBENCH)
+         ===================================================================== */}
+      <section className="section-divider bg-background-secondary/70 py-20 sm:py-28">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="max-w-3xl space-y-3">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+              05 // INSIDE THE ENGINEERING LAB
+            </p>
+            <h2 className="font-display text-section-display font-bold text-text-primary">
+              Where threat analysis meets software execution.
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary">
+              Explore how our three disciplines converge on real engineering challenges—from
+              initial threat modeling to verified code implementation and published research.
+            </p>
+          </FadeInSection>
+
+          <FadeInSection delay={0.06}>
+            <TriadEngineeringWorkbench />
+          </FadeInSection>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECTION 07 — RESEARCH & INTELLIGENCE (INTERACTIVE TOPIC NETWORK)
+         ===================================================================== */}
+      <section className="section-divider bg-background py-20 sm:py-28">
         <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
           <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-3xl space-y-2.5">
-              <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
-                [ 04 // SECURITY RESEARCH LABORATORY ]
+            <div className="max-w-3xl space-y-3">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                06 // RESEARCH &amp; INTELLIGENCE LABORATORY
               </p>
-              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                Technical research briefs & MITRE ATT&CK analysis.
+              <h2 className="font-display text-section-display font-bold text-text-primary">
+                Independent technical research &amp; MITRE ATT&amp;CK analysis.
               </h2>
               <p className="text-sm sm:text-base text-text-secondary">
-                Covering Threat Intelligence, IoT Security, Malware Analysis, Cloud Security,
-                Digital Forensics, and Secure Software Engineering. Working drafts are transparently
-                labelled.
+                Select a research node in the knowledge constellation or use the accessible
+                discipline filters to inspect our working technical papers.
               </p>
             </div>
             <Link
               href="/research"
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-card px-5 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary hover:text-brand-primary"
             >
-              <span>Enter Research Lab</span>
+              <span>Enter Full Research Lab</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </FadeInSection>
 
-          {/* Editorial Split: Left Featured Deep-Dive Brief + Right Indexed Briefs */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-            {primaryResearch && (
-              <div className="lg:col-span-5">
-                <SpotlightCard
-                  as="article"
-                  className="specular-top flex h-full flex-col justify-between border-brand-primary/40 p-6 sm:p-8"
-                >
-                  <div className="space-y-5">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="rounded-full border border-brand-primary/40 bg-brand-deep px-3 py-1 font-mono text-xs text-brand-primary">
-                        LEAD BRIEF · {primaryResearch.categoryName}
-                      </span>
-                      <span className="rounded border border-status-warning/40 bg-status-warning/10 px-2.5 py-0.5 font-mono text-[10px] text-status-warning">
-                        DRAFT BRIEF
-                      </span>
-                    </div>
+          <FadeInSection delay={0.06}>
+            <ResearchTopicNetwork />
+          </FadeInSection>
+        </div>
+      </section>
 
-                    <h3 className="font-display text-2xl font-bold leading-snug text-text-primary sm:text-3xl">
-                      <Link
-                        href={`/research/${primaryResearch.slug}`}
-                        className="hover:text-brand-primary transition-colors"
-                      >
-                        {primaryResearch.title}
-                      </Link>
-                    </h3>
+      {/* =====================================================================
+          SECTION 08 — HOW WE WORK (CONNECTED 6-STAGE PROCESS)
+         ===================================================================== */}
+      <section className="section-divider bg-background-secondary/70 py-20 sm:py-28">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="max-w-3xl space-y-3">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+              07 // HOW WE WORK
+            </p>
+            <h2 className="font-display text-section-display font-bold text-text-primary">
+              Disciplined engineering from discovery to continuous evolution.
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary">
+              Every engagement follows a transparent six-stage lifecycle with reproducible
+              deliverables at every milestone.
+            </p>
+          </FadeInSection>
 
-                    <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
-                      {primaryResearch.summary}
-                    </p>
+          <FadeInSection delay={0.06}>
+            <ProcessTimeline />
+          </FadeInSection>
+        </div>
+      </section>
 
-                    <div className="space-y-2 border-t border-brand-border/60 pt-4">
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
-                        Mapped MITRE ATT&CK Techniques
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {primaryResearch.mitreAttackRefs.map((ref) => (
-                          <span
-                            key={ref.id}
-                            className="rounded-lg border border-brand-border bg-background-elevated px-2.5 py-1 font-mono text-xs text-text-primary"
-                          >
-                            <strong className="text-brand-primary">{ref.id}</strong> · {ref.name}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+      {/* =====================================================================
+          SECTION 09 — CURATED 3-PILLAR TECHNOLOGY & ENGINEERING STACK
+         ===================================================================== */}
+      <section className="section-divider bg-background py-20 sm:py-28">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="max-w-3xl space-y-3">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+              08 // TECHNOLOGY &amp; ENGINEERING CAPABILITIES
+            </p>
+            <h2 className="font-display text-section-display font-bold text-text-primary">
+              Curated instrumentation across security, software, and research.
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary">
+              Organized by engineering discipline rather than a generic logo wall—reflecting the
+              actual languages, runtimes, and cloud platforms used across our verified repositories.
+            </p>
+          </FadeInSection>
 
-                  <div className="mt-8 flex items-center justify-between border-t border-brand-border/60 pt-4 font-mono text-xs">
-                    <span className="text-text-muted">
-                      {primaryResearch.readingTimeMin} min technical read
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {TECHNOLOGY_CAPABILITY_GROUPS.map((group, idx) => (
+              <FadeInSection key={group.title} delay={idx * 0.06}>
+                <div className="surface-glass flex h-full flex-col justify-between rounded-3xl p-7 sm:p-8 space-y-6">
+                  <div className="space-y-3 border-b border-brand-border/50 pb-5">
+                    <span className="font-mono text-xs font-bold tracking-wider text-brand-primary">
+                      {group.code}
                     </span>
-                    <Link
-                      href={`/research/${primaryResearch.slug}`}
-                      className="inline-flex items-center gap-1.5 font-bold text-brand-primary hover:underline"
-                    >
-                      <BookOpen className="h-4 w-4" />
-                      <span>Read Full Brief →</span>
-                    </Link>
+                    <h3 className="font-display text-2xl font-bold text-text-primary">
+                      {group.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      {group.description}
+                    </p>
                   </div>
-                </SpotlightCard>
-              </div>
-            )}
 
-            {/* Right 7 Columns: Structured Technical Ledger Rows */}
-            <div className="lg:col-span-7 flex flex-col justify-between gap-4">
-              {secondaryResearch.map((article, idx) => (
-                <SpotlightCard
-                  key={article.slug}
-                  as="article"
-                  className="p-5 sm:p-6"
-                >
-                  <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                    <div className="space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px]">
-                        <span className="text-brand-primary font-bold">
-                          BRIEF // 0{idx + 2}
-                        </span>
-                        <span>·</span>
-                        <Link
-                          href={`/research/categories/${article.categorySlug}`}
-                          className="text-brand-primary hover:underline"
-                        >
-                          {article.categoryName}
-                        </Link>
-                        <span>·</span>
-                        <span className="text-text-muted">{article.readingTimeMin} min read</span>
-                        {article.mitreAttackRefs.slice(0, 2).map((ref) => (
-                          <span
-                            key={ref.id}
-                            className="rounded border border-brand-border bg-background-elevated px-1.5 py-0.5 text-[10px] text-text-secondary"
-                          >
-                            {ref.id}
-                          </span>
-                        ))}
+                  <div className="space-y-3">
+                    {group.technologies.map((tech) => (
+                      <div
+                        key={tech.name}
+                        className="group flex items-center gap-3.5 rounded-2xl border border-brand-border/45 bg-background/60 p-3.5 transition-colors hover:border-brand-primary/40"
+                      >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-deep/60 text-brand-primary">
+                          <TechStackIcon name={tech.name} />
+                        </div>
+                        <div>
+                          <h4 className="font-display text-sm font-bold text-text-primary">
+                            {tech.name}
+                          </h4>
+                          <p className="text-xs text-text-secondary">{tech.role}</p>
+                        </div>
                       </div>
-
-                      <h3 className="font-display text-base sm:text-lg font-bold text-text-primary">
-                        <Link
-                          href={`/research/${article.slug}`}
-                          className="hover:text-brand-primary transition-colors"
-                        >
-                          {article.title}
-                        </Link>
-                      </h3>
-
-                      <p className="text-xs sm:text-sm text-text-secondary line-clamp-2">
-                        {article.summary}
-                      </p>
-                    </div>
-
-                    <Link
-                      href={`/research/${article.slug}`}
-                      className="inline-flex shrink-0 items-center gap-1.5 self-start sm:self-center rounded-xl border border-brand-border bg-background-elevated px-3.5 py-2 font-mono text-xs font-semibold text-brand-primary hover:border-brand-primary"
-                    >
-                      <span>Inspect</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </Link>
+                    ))}
                   </div>
-                </SpotlightCard>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6 — HOW WE WORK */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-24">
-        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="max-w-3xl space-y-2.5">
-            <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
-              [ 05 // HOW WE WORK ]
-            </p>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-              Structured engineering methodology from discovery to verified closure.
-            </h2>
-            <p className="text-sm sm:text-base text-text-secondary">
-              Select each phase below to inspect its technical objective and verified engineering
-              deliverables.
-            </p>
-          </FadeInSection>
-
-          <ProcessTimeline />
-        </div>
-      </section>
-
-      {/* SECTION 7 — TECHNOLOGY & INSTRUMENTATION STACK */}
-      <section className="section-divider bg-background py-16 sm:py-24">
-        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="max-w-3xl space-y-2.5">
-            <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
-              [ 06 // TECHNOLOGY & INSTRUMENTATION STACK ]
-            </p>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-              Production engineering and security instrumentation stack.
-            </h2>
-            <p className="text-sm sm:text-base text-text-secondary">
-              We build and audit systems using battle-tested languages, cloud infrastructure, and
-              automated verification pipelines.
-            </p>
-          </FadeInSection>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {CURATED_TECH_STACK.map((tech) => (
-              <SpotlightCard key={tech.name} className="group p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/70 text-brand-primary shadow-neon-sm">
-                    <TechStackIcon name={tech.name} />
-                  </div>
-                  <span className="rounded border border-brand-border bg-background-elevated px-2.5 py-0.5 font-mono text-[10px] text-brand-primary">
-                    {tech.code}
-                  </span>
                 </div>
-                <div className="mt-4 space-y-1">
-                  <h3 className="font-display text-base font-bold text-text-primary group-hover:text-brand-primary transition-colors">
-                    {tech.name}
-                  </h3>
-                  <p className="text-xs leading-relaxed text-text-secondary">{tech.role}</p>
-                </div>
-              </SpotlightCard>
+              </FadeInSection>
             ))}
-
-            {/* 12th Card: Official CODE.COMMIT Brand Emblem Anchor Card */}
-            <SpotlightCard className="group specular-top flex flex-col justify-between border-brand-primary/50 bg-brand-deep/20 p-5">
-              <div className="flex items-center justify-between gap-3">
-                <BrandLogo variant="compact" />
-                <span className="rounded border border-brand-primary/40 bg-brand-deep px-2.5 py-0.5 font-mono text-[10px] font-bold text-brand-primary">
-                  CORE STUDIO
-                </span>
-              </div>
-              <div className="mt-4 space-y-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-base font-bold text-brand-primary">
-                    CODE.COMMIT
-                  </h3>
-                  <Link
-                    href="/work"
-                    className="font-mono text-[11px] text-text-primary hover:text-brand-primary underline"
-                  >
-                    21 Systems →
-                  </Link>
-                </div>
-                <p className="text-xs leading-relaxed text-text-secondary">
-                  SECURITY × SOFTWARE — Verified Open-Source & Enterprise Architecture
-                </p>
-              </div>
-            </SpotlightCard>
           </div>
         </div>
       </section>
 
-      {/* SECTION 8 — FINAL CTA */}
-      <section className="relative overflow-hidden py-16 sm:py-24 lg:py-28">
+      {/* =====================================================================
+          SECTION 10 — FINAL EDITORIAL CTA (Surface A + Surface D Accent)
+         ===================================================================== */}
+      <section className="relative overflow-hidden py-20 sm:py-28 lg:py-32">
         <div className="pointer-events-none absolute inset-0 bg-technical-grid-masked" />
-        <div className="pointer-events-none absolute inset-0 bg-radial-glow" />
         <div className="container relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-          <SpotlightCard className="specular-top mx-auto max-w-5xl border-brand-primary/50 p-7 sm:p-12 lg:p-16 shadow-neon-md">
+          <div className="surface-immersive specular-top mx-auto max-w-5xl rounded-3xl p-8 sm:p-12 lg:p-16">
             <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-              <div className="lg:col-span-8 space-y-4 text-left">
+              <div className="lg:col-span-8 space-y-4">
                 <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-background-elevated px-3.5 py-1.5 font-mono text-xs text-brand-primary">
                   <Shield className="h-3.5 w-3.5" />
-                  <span>READY TO SCOPE YOUR ENGAGEMENT</span>
+                  <span>INITIALIZE AN ENGAGEMENT</span>
                 </div>
 
-                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-5xl">
                   Secure today. Build a safer tomorrow.
                 </h2>
 
-                <p className="max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base lg:text-lg">
+                <p className="max-w-2xl text-base leading-relaxed text-text-secondary sm:text-lg">
                   Have a security challenge or an engineering project? Let&apos;s define the scope
                   and build a practical solution.
                 </p>
@@ -1010,7 +669,7 @@ export default function HomePage() {
               <div className="lg:col-span-4 flex flex-col gap-3">
                 <Link
                   href="/contact"
-                  className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
+                  className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background transition-all hover:bg-brand-secondary"
                 >
                   <span>Initialize Project</span>
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -1019,11 +678,11 @@ export default function HomePage() {
                   href="/services"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-elevated px-6 py-4 text-xs sm:text-sm font-semibold text-text-primary hover:border-brand-primary"
                 >
-                  <span>Review Service Scopes</span>
+                  <span>Explore Service Scopes</span>
                 </Link>
               </div>
             </div>
-          </SpotlightCard>
+          </div>
         </div>
       </section>
     </div>

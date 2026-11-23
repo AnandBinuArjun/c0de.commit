@@ -1,20 +1,27 @@
-# System Architecture — CODE.COMMIT
+# System Architecture — CODE.COMMIT 2.0
 
 ## 1. High-Level Architecture
-CODE.COMMIT is built on a modern, monolithic full-stack Next.js (App Router) architecture designed for Vercel deployment with PostgreSQL + Prisma ORM persistence and resilient structured-data fallback.
+CODE.COMMIT is built on a modern, monolithic full-stack Next.js (App Router) architecture designed for Vercel deployment with PostgreSQL + Prisma ORM persistence, Resend notification delivery, and resilient structured-data fallback.
 
 ```text
 [Client Browser]
    │  HTTPS + CSP + HSTS + Frame-Ancestors 'none'
    ▼
 [Next.js App Router (Server Components & Client Islands)]
-   ├── Marketing & Content Routes (/, /services/*, /products/*, /work/*, /research/*, /insights/*)
-   ├── Interactive UI Islands (Allowlisted Terminal, Filterable Grids, Process Timeline)
+   ├── Marketing & Content Routes (/, /services/*, /products/*, /work/*, /research/*, /insights/*, /tools)
+   ├── CODE.COMMIT 2.0 Studio Interactive Islands:
+   │      ├── HeroTriadVisualizer (3D-inspired isometric SVG + Motion 3-layer stack)
+   │      ├── EngineeringPillars (Expandable Security × Software × Research showcase)
+   │      ├── PortfolioInteractiveShowcase (Flagship CloudSentinel + split-screen project rail)
+   │      ├── TriadEngineeringWorkbench (Progressive-disclosure lab + live telemetry drawer)
+   │      ├── ResearchTopicNetwork (Interactive 8-node SVG topic constellation + paper filter)
+   │      ├── ProcessTimeline (Connected 6-stage interactive engineering methodology)
+   │      └── CommandPalette, FloatingHudDock, and Allowlisted SecurityTerminal
    └── API Route Handlers (/api/contact, /api/health)
           │
           ├── Zod Schema Validation + Secret Pattern Rejector
           ├── Token-Bucket IP Rate Limiter + Honeypot Anti-Spam
-          ├── Safe Notification Dispatcher (Server-side SMTP/Console Audit)
+          ├── Resend API / SMTP Safe Notification Dispatcher
           └── Data Access Layer (Prisma ORM ──► PostgreSQL + Structured Data Seed)
 ```
 
@@ -25,7 +32,7 @@ CODE.COMMIT is built on a modern, monolithic full-stack Next.js (App Router) arc
    - Enforces rate limits (default 5 requests / 60 seconds per IP).
    - Checks anti-spam honeypot field (`website_url`).
    - Validates payload against `contactSubmissionSchema` (Zod) and rejects payloads containing accidental secret/private-key patterns (`-----BEGIN`, `AKIA`, etc.).
-   - Persists submission with a unique reference code (`CC-YYYY-XXXX`) and returns confirmation state.
+   - Persists submission with a unique reference code (`CC-YYYY-XXXX`), dispatches real-time email notification via Resend (`RESEND_API_KEY`), and returns confirmation state.
 
 ## 3. Database Schema Summary
 Defined in `prisma/schema.prisma`:

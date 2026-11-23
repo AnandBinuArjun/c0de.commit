@@ -1,16 +1,25 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("CODE.COMMIT E2E Verification Suite", () => {
-  test("Homepage renders headline, capabilities, services, portfolio, and terminal", async ({
+  test("Homepage renders CODE.COMMIT 2.0 editorial headline, triad pillars, services, portfolio, and terminal", async ({
     page,
   }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: /Find vulnerabilities/i })
+      page.getByRole("heading", { name: /We break systems/i })
     ).toBeVisible();
-    await expect(page.getByText("[ SYSTEM ONLINE ] — SECURITY ENGINEERING")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Explore Services" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "View Our Work" }).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Find vulnerabilities\. Fix them\. Build securely\./i })
+    ).toBeVisible();
+    await expect(
+      page.getByText("INDEPENDENT SECURITY & SOFTWARE ENGINEERING STUDIO")
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Explore Our Expertise/i }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Discover Our Work/i }).first()
+    ).toBeVisible();
   });
 
   test("Services navigation and Penetration Testing page load with RoE notice", async ({
