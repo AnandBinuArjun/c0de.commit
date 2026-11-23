@@ -3,6 +3,8 @@ import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SecurityLabTools } from "@/components/tools/security-lab-tools";
 import { InteractiveTerminal } from "@/components/terminal/interactive-terminal";
+import { InteractiveArchitectureTopology } from "@/components/projects/interactive-architecture-topology";
+import { SecurityCodeDiffViewer } from "@/components/services/security-code-diff-viewer";
 
 describe("SecurityLabTools (/tools) Interactive Component Verification", () => {
   it("renders Utility 01 (HTTP Header & CSP Evaluator) by default and updates score live when headers change", () => {
@@ -73,6 +75,42 @@ describe("SecurityLabTools (/tools) Interactive Component Verification", () => {
     fireEvent.submit(form);
     expect(
       screen.getByText(/Arbitrary shell execution is disabled by design/i)
+    ).toBeInTheDocument();
+  });
+
+  it("switches nodes in InteractiveArchitectureTopology and renders data flow transitions", () => {
+    render(
+      <InteractiveArchitectureTopology
+        projectName="CloudSentinel"
+        nodes={[
+          { id: "n1", label: "AWS STS Connector", layer: "Discovery", detail: "Read-only STS" },
+          { id: "n2", label: "Posture Engine", layer: "Analysis", detail: "18 Posture Rules" },
+        ]}
+        flows={["1. Poll AWS STS", "2. Evaluate 18 posture rules"]}
+        securityConsiderations={["Read-only by default"]}
+      />
+    );
+
+    expect(screen.getByText(/STAGE 01 \/\/ DISCOVERY/i)).toBeInTheDocument();
+    const node2Tab = screen.getByRole("tab", { name: /NODE 02/i });
+    fireEvent.click(node2Tab);
+    expect(screen.getByText(/STAGE 02 \/\/ ANALYSIS/i)).toBeInTheDocument();
+    expect(screen.getByText(/2\. Evaluate 18 posture rules/i)).toBeInTheDocument();
+  });
+
+  it("toggles between Side-by-Side Diff and Hardened Patch in SecurityCodeDiffViewer", () => {
+    render(<SecurityCodeDiffViewer />);
+    expect(
+      screen.getByText(/VULNERABLE: Unscoped primary-key lookup/i)
+    ).toBeInTheDocument();
+
+    const hardenedBtn = screen.getByRole("button", { name: /HARDENED PATCH/i });
+    fireEvent.click(hardenedBtn);
+    expect(
+      screen.queryByText(/VULNERABLE: Unscoped primary-key lookup/i)
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/HARDENED: Mandatory composite tenant boundary/i)
     ).toBeInTheDocument();
   });
 });

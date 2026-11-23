@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { InteractiveTerminal } from "@/components/terminal/interactive-terminal";
 import { CommandPalette } from "@/components/layout/command-palette";
+import { FloatingHudDock } from "@/components/layout/floating-hud-dock";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Footer />
+      <FloatingHudDock
+        onOpenSearch={() => setSearchOpen(true)}
+        onOpenTerminal={() => setTerminalOpen(true)}
+      />
       <InteractiveTerminal
         isOpen={terminalOpen}
         onClose={() => setTerminalOpen(false)}

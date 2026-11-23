@@ -15,6 +15,8 @@ import {
 import type { ServiceItem } from "@/types";
 import { PROJECTS_DATA } from "@/data/projects";
 import { RESEARCH_ARTICLES } from "@/data/research";
+import { ServiceScopeConfigurator } from "@/components/services/service-scope-configurator";
+import { SecurityCodeDiffViewer } from "@/components/services/security-code-diff-viewer";
 
 interface ServiceDetailTemplateProps {
   service: ServiceItem;
@@ -238,6 +240,16 @@ export function ServiceDetailTemplate({ service }: ServiceDetailTemplateProps) {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Interactive RoE & Scope Builder */}
+          <div className="pt-6">
+            <ServiceScopeConfigurator service={service} />
+          </div>
+
+          {/* Vulnerable vs. Hardened Remediation Code Diff Viewer */}
+          <div className="pt-6">
+            <SecurityCodeDiffViewer />
           </div>
         </div>
       </section>

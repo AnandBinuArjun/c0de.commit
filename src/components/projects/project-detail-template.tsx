@@ -13,6 +13,7 @@ import {
 import type { ProjectItem } from "@/types";
 import { RESEARCH_ARTICLES } from "@/data/research";
 import { ProductLogo } from "@/components/layout/brand-logo";
+import { InteractiveArchitectureTopology } from "@/components/projects/interactive-architecture-topology";
 
 interface ProjectDetailTemplateProps {
   project: ProjectItem;
@@ -167,46 +168,12 @@ export function ProjectDetailTemplate({
             </h2>
           </div>
 
-          <div className="rounded-2xl border border-brand-border bg-background-card p-6 sm:p-8 space-y-8">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {project.architectureDiagram.nodes.map((node, idx) => (
-                <div
-                  key={node.id}
-                  className="relative flex flex-col justify-between rounded-xl border border-brand-primary/30 bg-background-elevated p-5 space-y-3"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between font-mono text-[11px] text-brand-primary">
-                      <span>{node.layer.toUpperCase()}</span>
-                      <span>0{idx + 1}</span>
-                    </div>
-                    <h3 className="font-display text-lg font-bold text-text-primary">
-                      {node.label}
-                    </h3>
-                    <p className="text-xs leading-relaxed text-text-secondary">
-                      {node.detail}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="border-t border-brand-border/60 pt-6">
-              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-brand-primary mb-4">
-                <Layers className="h-4 w-4" />
-                <span>Verified Pipeline Sequence</span>
-              </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {project.architectureDiagram.flows.map((flow) => (
-                  <div
-                    key={flow}
-                    className="rounded-lg border border-brand-border bg-background px-4 py-3 font-mono text-xs text-text-secondary"
-                  >
-                    {flow}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <InteractiveArchitectureTopology
+            projectName={project.name}
+            nodes={project.architectureDiagram.nodes}
+            flows={project.architectureDiagram.flows}
+            securityConsiderations={project.securityConsiderations}
+          />
         </div>
       </section>
 

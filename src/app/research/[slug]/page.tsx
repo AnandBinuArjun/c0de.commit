@@ -16,6 +16,7 @@ import {
 } from "@/data/research";
 import { PROJECTS_DATA } from "@/data/projects";
 import { CodeBlock } from "@/components/research/code-block";
+import { ResearchReadingChrome } from "@/components/research/research-reading-chrome";
 import { formatDate } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -125,47 +126,16 @@ export default async function ResearchArticlePage({
       <section className="bg-background py-16 lg:py-20">
         <div className="container mx-auto max-w-5xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-            {/* Sidebar: TOC + MITRE ATT&CK Mappings */}
-            <aside className="lg:col-span-4 space-y-6">
-              <div className="rounded-2xl border border-brand-border bg-background-card p-5 space-y-4">
-                <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-brand-primary">
-                  <ListTree className="h-4 w-4" />
-                  <span>Table of Contents</span>
-                </div>
-                <ul className="space-y-2.5 text-xs">
-                  {article.tableOfContents.map((toc) => (
-                    <li key={toc.id}>
-                      <a
-                        href={`#${toc.id}`}
-                        className="text-text-secondary hover:text-brand-primary transition-colors"
-                      >
-                        {toc.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-2xl border border-brand-border bg-background-card p-5 space-y-4">
-                <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-brand-primary">
-                  <Shield className="h-4 w-4" />
-                  <span>MITRE ATT&CK Mappings</span>
-                </div>
-                <div className="space-y-2.5">
-                  {article.mitreAttackRefs.map((ref) => (
-                    <div
-                      key={ref.id}
-                      className="rounded-lg border border-brand-border bg-background-elevated p-3 space-y-1"
-                    >
-                      <div className="flex items-center justify-between font-mono text-xs">
-                        <span className="font-bold text-brand-primary">{ref.id}</span>
-                        <span className="text-[10px] text-text-muted">{ref.tactic}</span>
-                      </div>
-                      <p className="text-xs text-text-primary">{ref.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* Sidebar: Scroll-Spy TOC + MITRE ATT&CK Mappings + Citation Copier */}
+            <aside className="lg:col-span-4">
+              <ResearchReadingChrome
+                articleTitle={article.title}
+                articleSlug={article.slug}
+                authorName={article.authorName}
+                publishedAt={article.publishedAt}
+                toc={article.tableOfContents}
+                mitreRefs={article.mitreAttackRefs}
+              />
             </aside>
 
             {/* Article Sections */}

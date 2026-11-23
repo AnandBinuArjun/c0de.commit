@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CheckCircle2,
   ShieldAlert,
@@ -28,6 +28,42 @@ export function InitializeProjectForm() {
     consentAccepted: false,
     websiteUrl: "",
   });
+
+  // Pre-fill serviceCategory and projectDescription from URL query parameters (?service=...&scope=...&project=...)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const serviceParam = params.get("service");
+    const scopeParam = params.get("scope");
+    const projectParam = params.get("project");
+
+    setFormData((prev) => {
+      let nextCategory = prev.serviceCategory;
+      let nextDescription = prev.projectDescription;
+
+      const validCategories = SERVICE_CATEGORY_OPTIONS.map((o) => o.value);
+      if (
+        serviceParam &&
+        validCategories.includes(serviceParam as ContactSubmissionInput["serviceCategory"])
+      ) {
+        nextCategory = serviceParam as ContactSubmissionInput["serviceCategory"];
+      } else if (projectParam === "cloudsentinel") {
+        nextCategory = "cloudsentinel-platform";
+      }
+
+      if (scopeParam && !prev.projectDescription) {
+        nextDescription = scopeParam;
+      } else if (projectParam && !prev.projectDescription) {
+        nextDescription = `Requesting an architecture briefing and deployment consultation regarding ${projectParam.toUpperCase()}.`;
+      }
+
+      return {
+        ...prev,
+        serviceCategory: nextCategory,
+        projectDescription: nextDescription,
+      };
+    });
+  }, []);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);

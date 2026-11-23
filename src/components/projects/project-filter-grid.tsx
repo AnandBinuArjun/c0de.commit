@@ -2,7 +2,15 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search, GitBranch, ArrowRight, Filter } from "lucide-react";
+import {
+  Search,
+  GitBranch,
+  ArrowRight,
+  Filter,
+  Copy,
+  Check,
+  Terminal,
+} from "lucide-react";
 import type { ProjectItem } from "@/types";
 import { filterProjects } from "@/components/projects/project-filter-utils";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
@@ -13,6 +21,19 @@ interface ProjectFilterGridProps {
   baseRoute?: "/work" | "/products";
 }
 
+const TECH_COLOR_MAP: Record<string, string> = {
+  Python: "#00F58A",
+  TypeScript: "#38BDF8",
+  React: "#00C878",
+  "Next.js": "#F3F8F5",
+  FastAPI: "#10B981",
+  PostgreSQL: "#65B9FF",
+  Docker: "#2563EB",
+  Linux: "#F6B75C",
+  AWS: "#F59E0B",
+  "Microsoft Azure": "#60A5FA",
+};
+
 export function ProjectFilterGrid({
   projects,
   baseRoute = "/work",
@@ -20,6 +41,7 @@ export function ProjectFilterGrid({
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedTechnology, setSelectedTechnology] = useState("ALL");
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(projects.map((p) => p.category)));
@@ -41,12 +63,22 @@ export function ProjectFilterGrid({
     [projects, query, selectedCategory, selectedTechnology]
   );
 
+  const handleCopyClone = async (project: ProjectItem) => {
+    const cloneCmd = `git clone ${project.githubUrl}.git`;
+    try {
+      await navigator.clipboard.writeText(cloneCmd);
+      setCopiedSlug(project.slug);
+      setTimeout(() => setCopiedSlug(null), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Filter Controls Bar */}
       <div className="rounded-2xl border border-brand-border bg-background-card p-6 space-y-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-          {/* Search Input */}
           <div className="md:col-span-6 relative">
             <label htmlFor="project-search-input" className="sr-only">
               Search engineering projects
@@ -62,7 +94,6 @@ export function ProjectFilterGrid({
             />
           </div>
 
-          {/* Category Dropdown */}
           <div className="md:col-span-3">
             <label htmlFor="category-select" className="sr-only">
               Filter by category
@@ -81,7 +112,6 @@ export function ProjectFilterGrid({
             </select>
           </div>
 
-          {/* Technology Dropdown */}
           <div className="md:col-span-3">
             <label htmlFor="technology-select" className="sr-only">
               Filter by technology
@@ -101,7 +131,7 @@ export function ProjectFilterGrid({
           </div>
         </div>
 
-        {/* Quick Category Pills (Horizontally scrollable on narrow mobile screens) */}
+        {/* Quick Category Pills */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1 pb-1">
           <span className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-text-muted mr-1">
             <Filter className="h-3.5 w-3.5 text-brand-primary" />
@@ -162,6 +192,8 @@ export function ProjectFilterGrid({
               baseRoute === "/products" || project.isProduct
                 ? `/products/${project.slug}`
                 : `/work/${project.slug}`;
+            const topLangs = project.technologies.slice(0, 3);
+            const shareWidth = Math.floor(100 / Math.max(topLangs.length, 1));
 
             return (
               <SpotlightCard
@@ -188,6 +220,36 @@ export function ProjectFilterGrid({
                     </p>
                   </div>
 
+                  {/* GitHub-Style Language Proportion Telemetry Bar */}
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-background-elevated">
+                      {topLangs.map((lang, lIdx) => (
+                        <div
+                          key={lang}
+                          style={{
+                            width: `${lIdx === topLangs.length - 1 ? 100 - shareWidth * (topLangs.length - 1) : shareWidth}%`,
+                            backgroundColor: TECH_COLOR_MAP[lang] || "#00F58A",
+                          }}
+                          title={lang}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between text-[10px] font-mono text-text-muted">
+                      <div className="flex items-center gap-2.5">
+                        {topLangs.map((lang) => (
+                          <span key={lang} className="inline-flex items-center gap-1">
+                            <span
+                              className="h-1.5 w-1.5 rounded-full"
+                              style={{ backgroundColor: TECH_COLOR_MAP[lang] || "#00F58A" }}
+                            />
+                            <span>{lang}</span>
+                          </span>
+                        ))}
+                      </div>
+                      <span>OSS VERIFIED</span>
+                    </div>
+                  </div>
+
                   <div className="space-y-1.5 border-t border-brand-border/60 pt-3">
                     <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
                       Implemented Capabilities
@@ -202,7 +264,7 @@ export function ProjectFilterGrid({
                     </ul>
                   </div>
 
-                  <div className="flex flex-wrap gap-1.5 pt-2">
+                  <div className="flex flex-wrap gap-1.5 pt-1">
                     {project.technologies.map((tech) => (
                       <span
                         key={tech}
@@ -214,23 +276,53 @@ export function ProjectFilterGrid({
                   </div>
                 </div>
 
-                <div className="mt-6 flex items-center justify-between border-t border-brand-border/60 pt-4">
-                  <Link
-                    href={detailUrl}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-primary hover:underline"
-                  >
-                    <span>Architecture & Details</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-text-primary"
-                  >
-                    <GitBranch className="h-3.5 w-3.5" />
-                    <span>GitHub</span>
-                  </a>
+                {/* Bottom Action & 1-Click Git Clone Bar */}
+                <div className="mt-6 space-y-3 border-t border-brand-border/60 pt-4">
+                  <div className="flex items-center justify-between gap-2 rounded-lg border border-brand-border/70 bg-background-elevated/80 px-3 py-1.5 font-mono text-[11px]">
+                    <div className="flex items-center gap-1.5 truncate text-text-secondary">
+                      <Terminal className="h-3 w-3 text-brand-primary shrink-0" />
+                      <span className="truncate">
+                        git clone {project.githubUrl.replace("https://", "")}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyClone(project)}
+                      aria-label={`Copy git clone command for ${project.name}`}
+                      className="inline-flex shrink-0 items-center gap-1 rounded border border-brand-border bg-background-card px-2 py-0.5 text-[10px] text-text-primary hover:border-brand-primary hover:text-brand-primary"
+                    >
+                      {copiedSlug === project.slug ? (
+                        <>
+                          <Check className="h-3 w-3 text-brand-primary" />
+                          <span className="text-brand-primary">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3 w-3" />
+                          <span>Clone</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={detailUrl}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-primary hover:underline"
+                    >
+                      <span>Architecture & Details</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-text-primary"
+                    >
+                      <GitBranch className="h-3.5 w-3.5" />
+                      <span>GitHub</span>
+                    </a>
+                  </div>
                 </div>
               </SpotlightCard>
             );
