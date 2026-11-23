@@ -24,6 +24,7 @@ import { RESEARCH_ARTICLES } from "@/data/research";
 import { ProcessTimeline } from "@/components/home/process-timeline";
 import { SecurityTelemetryConsole } from "@/components/home/security-telemetry-console";
 import { DisciplineSchematic } from "@/components/home/discipline-schematic";
+import { TriadEngineeringWorkbench } from "@/components/home/triad-engineering-workbench";
 import { TechStackIcon } from "@/components/home/tech-stack-icons";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { FadeInSection } from "@/components/animations/fade-in-section";
@@ -371,6 +372,11 @@ export default function HomePage() {
               </FadeInSection>
             ))}
           </div>
+
+          {/* Interactive SECURITY x SOFTWARE x RESEARCH Triad Convergence Workbench */}
+          <FadeInSection delay={0.12}>
+            <TriadEngineeringWorkbench />
+          </FadeInSection>
         </div>
       </section>
 

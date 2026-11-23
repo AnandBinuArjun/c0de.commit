@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShieldAlert, Layers, Rss } from "lucide-react";
 import { RESEARCH_ARTICLES, RESEARCH_CATEGORIES } from "@/data/research";
 import { ResearchFilterFeed } from "@/components/research/research-filter-feed";
+import { MitreAttackMatrixExplorer } from "@/components/research/mitre-attack-matrix-explorer";
 
 export const metadata: Metadata = {
   title: "Security Research Laboratory — MITRE ATT&CK & Architecture Briefs",
@@ -55,6 +56,13 @@ export default function ResearchIndexPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Interactive MITRE ATT&CK Coverage Matrix */}
+      <section className="border-b border-brand-border/60 bg-background py-14">
+        <div className="container mx-auto">
+          <MitreAttackMatrixExplorer />
         </div>
       </section>
 
