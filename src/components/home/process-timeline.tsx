@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, Layers, Shield, Cpu, FileCheck, Search, Wrench } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 
 const PROCESS_STAGES = [
@@ -90,10 +91,10 @@ export function ProcessTimeline() {
   const activeStage = PROCESS_STAGES[activeIndex];
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-      {/* Stage Selector List */}
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+      {/* Stage Selector: Horizontal Touch Stepper on Mobile / Vertical Rail on Desktop */}
       <div
-        className="lg:col-span-5 flex flex-col gap-2.5"
+        className="lg:col-span-5 flex lg:flex-col gap-2.5 overflow-x-auto no-scrollbar pb-2 lg:pb-0"
         role="tablist"
         aria-label="How We Work Process Stages"
       >
@@ -109,16 +110,16 @@ export function ProcessTimeline() {
               id={`process-tab-${stage.number}`}
               onClick={() => setActiveIndex(idx)}
               className={cn(
-                "group flex items-center justify-between rounded-xl border p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
+                "group flex shrink-0 lg:shrink items-center justify-between rounded-xl border px-4 py-3.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary min-w-[210px] sm:min-w-[240px] lg:min-w-0",
                 isSelected
                   ? "border-brand-primary bg-background-card shadow-neon-sm"
                   : "border-brand-border/60 bg-background-elevated/60 hover:border-brand-primary/40 hover:bg-background-card/50"
               )}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3.5">
                 <span
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg border font-mono text-xs font-bold",
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border font-mono text-xs font-bold transition-colors",
                     isSelected
                       ? "border-brand-primary bg-brand-primary text-background"
                       : "border-brand-border bg-background text-brand-primary"
@@ -127,15 +128,15 @@ export function ProcessTimeline() {
                   {stage.number}
                 </span>
                 <div>
-                  <p className="font-display text-base font-bold text-text-primary">
+                  <p className="font-display text-sm sm:text-base font-bold text-text-primary">
                     {stage.number} — {stage.name}
                   </p>
-                  <p className="text-xs text-text-secondary">{stage.title}</p>
+                  <p className="text-xs text-text-secondary line-clamp-1">{stage.title}</p>
                 </div>
               </div>
               <span
                 className={cn(
-                  "font-mono text-xs transition-transform",
+                  "hidden lg:inline font-mono text-xs transition-transform",
                   isSelected ? "text-brand-primary translate-x-0.5" : "text-text-muted"
                 )}
               >
@@ -147,15 +148,17 @@ export function ProcessTimeline() {
       </div>
 
       {/* Active Stage Detail Card */}
-      <div
+      <SpotlightCard
         id={`process-panel-${activeStage.number}`}
-        role="tabpanel"
-        aria-labelledby={`process-tab-${activeStage.number}`}
-        className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-brand-border bg-background-card p-8 shadow-card-elevated"
+        className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-9"
       >
-        <div className="space-y-6">
+        <div
+          role="tabpanel"
+          aria-labelledby={`process-tab-${activeStage.number}`}
+          className="space-y-6"
+        >
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border/70 pb-5">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <span className="font-mono text-xs uppercase tracking-widest text-brand-primary">
                 STAGE {activeStage.number} / 06 · METHODOLOGY
               </span>
@@ -163,7 +166,7 @@ export function ProcessTimeline() {
                 {activeStage.number} — {activeStage.name}: {activeStage.title}
               </h3>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/60 text-brand-primary">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/70 text-brand-primary shadow-neon-sm">
               <Layers className="h-6 w-6" />
             </div>
           </div>
@@ -172,12 +175,12 @@ export function ProcessTimeline() {
             <h4 className="font-mono text-xs uppercase tracking-wider text-text-muted">
               Stage Objective
             </h4>
-            <p className="text-base leading-relaxed text-text-secondary">
+            <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
               {activeStage.purpose}
             </p>
           </div>
 
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-1">
             <h4 className="font-mono text-xs uppercase tracking-wider text-text-muted">
               Verified Stage Deliverables
             </h4>
@@ -185,7 +188,7 @@ export function ProcessTimeline() {
               {activeStage.deliverables.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 rounded-lg border border-brand-border/60 bg-background-elevated/80 px-4 py-3 text-sm text-text-primary"
+                  className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-background-elevated/85 px-4 py-3 text-xs sm:text-sm text-text-primary"
                 >
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
                   <span>{item}</span>
@@ -195,11 +198,11 @@ export function ProcessTimeline() {
           </div>
         </div>
 
-        {/* Stage Progress Bar */}
-        <div className="mt-8 border-t border-brand-border/60 pt-5">
-          <div className="flex items-center justify-between font-mono text-xs text-text-muted mb-2">
+        {/* Stage Progress Bar + Quick Step Buttons on Mobile */}
+        <div className="mt-8 border-t border-brand-border/60 pt-5 space-y-3">
+          <div className="flex items-center justify-between font-mono text-xs text-text-muted">
             <span>ENGAGEMENT LIFECYCLE PROGRESSION</span>
-            <span className="text-brand-primary">
+            <span className="text-brand-primary font-bold">
               {Math.round(((activeIndex + 1) / PROCESS_STAGES.length) * 100)}%
             </span>
           </div>
@@ -209,8 +212,28 @@ export function ProcessTimeline() {
               style={{ width: `${((activeIndex + 1) / PROCESS_STAGES.length) * 100}%` }}
             />
           </div>
+          <div className="flex items-center justify-between pt-1">
+            <button
+              type="button"
+              disabled={activeIndex === 0}
+              onClick={() => setActiveIndex((prev) => Math.max(0, prev - 1))}
+              className="font-mono text-xs text-text-secondary hover:text-brand-primary disabled:opacity-40"
+            >
+              ← Previous Stage
+            </button>
+            <button
+              type="button"
+              disabled={activeIndex === PROCESS_STAGES.length - 1}
+              onClick={() =>
+                setActiveIndex((prev) => Math.min(PROCESS_STAGES.length - 1, prev + 1))
+              }
+              className="font-mono text-xs text-brand-primary hover:underline disabled:opacity-40"
+            >
+              Next Stage →
+            </button>
+          </div>
         </div>
-      </div>
+      </SpotlightCard>
     </div>
   );
 }

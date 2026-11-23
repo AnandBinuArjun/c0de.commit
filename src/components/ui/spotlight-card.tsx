@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface SpotlightCardProps {
   children: React.ReactNode;
+  id?: string;
   className?: string;
   as?: "div" | "article" | "section";
   spotlightColor?: string;
@@ -16,6 +17,7 @@ interface SpotlightCardProps {
  */
 export function SpotlightCard({
   children,
+  id,
   className,
   as: Component = "div",
   spotlightColor = "rgba(0, 245, 138, 0.11)",
@@ -35,6 +37,7 @@ export function SpotlightCard({
 
   return (
     <Component
+      id={id}
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setOpacity(1)}

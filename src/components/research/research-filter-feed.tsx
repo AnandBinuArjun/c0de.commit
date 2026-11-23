@@ -73,8 +73,8 @@ export function ResearchFilterFeed({ articles, categories }: ResearchFilterFeedP
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1 font-mono text-xs text-text-muted mr-1">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <span className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-text-muted mr-1">
             <Filter className="h-3.5 w-3.5 text-brand-primary" />
             <span>Discipline:</span>
           </span>
@@ -82,7 +82,7 @@ export function ResearchFilterFeed({ articles, categories }: ResearchFilterFeedP
             type="button"
             onClick={() => setSelectedCategory("ALL")}
             className={cn(
-              "rounded-full border px-3 py-1 font-mono text-xs transition-colors",
+              "shrink-0 rounded-full border px-3 py-1 font-mono text-xs transition-colors",
               selectedCategory === "ALL"
                 ? "border-brand-primary bg-brand-deep text-brand-primary"
                 : "border-brand-border bg-background-elevated text-text-secondary hover:border-brand-primary/50"
@@ -96,7 +96,7 @@ export function ResearchFilterFeed({ articles, categories }: ResearchFilterFeedP
               type="button"
               onClick={() => setSelectedCategory(cat.slug)}
               className={cn(
-                "rounded-full border px-3 py-1 font-mono text-xs transition-colors",
+                "shrink-0 rounded-full border px-3 py-1 font-mono text-xs transition-colors",
                 selectedCategory === cat.slug
                   ? "border-brand-primary bg-brand-deep text-brand-primary"
                   : "border-brand-border bg-background-elevated text-text-secondary hover:border-brand-primary/50"

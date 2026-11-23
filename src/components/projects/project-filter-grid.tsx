@@ -101,9 +101,9 @@ export function ProjectFilterGrid({
           </div>
         </div>
 
-        {/* Quick Category Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="inline-flex items-center gap-1 font-mono text-xs text-text-muted mr-1">
+        {/* Quick Category Pills (Horizontally scrollable on narrow mobile screens) */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1 pb-1">
+          <span className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-text-muted mr-1">
             <Filter className="h-3.5 w-3.5 text-brand-primary" />
             <span>Domain:</span>
           </span>
@@ -113,7 +113,7 @@ export function ProjectFilterGrid({
               type="button"
               onClick={() => setSelectedCategory(cat)}
               className={cn(
-                "rounded-full border px-3 py-1 font-mono text-xs transition-colors",
+                "shrink-0 rounded-full border px-3 py-1 font-mono text-xs transition-colors",
                 selectedCategory === cat
                   ? "border-brand-primary bg-brand-deep text-brand-primary"
                   : "border-brand-border bg-background-elevated text-text-secondary hover:border-brand-primary/50"
