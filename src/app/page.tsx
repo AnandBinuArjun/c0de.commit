@@ -14,6 +14,8 @@ import {
   BookOpen,
   Shield,
   Wrench,
+  Activity,
+  Terminal,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/config/site";
 import { SERVICES_DATA } from "@/data/services";
@@ -21,6 +23,7 @@ import { PROJECTS_DATA, getFeaturedProjects } from "@/data/projects";
 import { RESEARCH_ARTICLES } from "@/data/research";
 import { ProcessTimeline } from "@/components/home/process-timeline";
 import { SecurityTelemetryConsole } from "@/components/home/security-telemetry-console";
+import { DisciplineSchematic } from "@/components/home/discipline-schematic";
 import { TechStackIcon } from "@/components/home/tech-stack-icons";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { FadeInSection } from "@/components/animations/fade-in-section";
@@ -37,9 +40,10 @@ const SERVICE_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 
 const CORE_CAPABILITIES = [
   {
-    code: "DISCIPLINE // 01",
+    code: "01 // OFFENSIVE",
     category: "OFFENSIVE SECURITY",
     subtitle: "Authorised Adversarial Verification",
+    schematic: "OFFENSIVE" as const,
     description:
       "Manual-first offensive evaluations designed to uncover chained business-logic flaws, authentication bypasses, and privilege escalation paths before adversaries do.",
     items: [
@@ -51,9 +55,10 @@ const CORE_CAPABILITIES = [
     href: "/services/penetration-testing",
   },
   {
-    code: "DISCIPLINE // 02",
+    code: "02 // DEFENSIVE",
     category: "DEFENSIVE ENGINEERING",
     subtitle: "Resilient Posture & Detection",
+    schematic: "DEFENSIVE" as const,
     description:
       "Multi-cloud security architecture, IAM blast-radius reduction, and deterministic telemetry pipelines across AWS, Microsoft Azure, and Linux infrastructure.",
     items: [
@@ -65,9 +70,10 @@ const CORE_CAPABILITIES = [
     href: "/services/cloud-security",
   },
   {
-    code: "DISCIPLINE // 03",
+    code: "03 // ENGINEERING",
     category: "SECURE DEVELOPMENT",
     subtitle: "Defence-in-Depth Software Systems",
+    schematic: "DEVELOPMENT" as const,
     description:
       "Full-stack engineering of high-assurance web platforms, APIs, and custom security control planes built with strict schema validation and least privilege.",
     items: [
@@ -98,176 +104,221 @@ export default function HomePage() {
   const featuredProjects = getFeaturedProjects();
   const featuredResearch = RESEARCH_ARTICLES.slice(0, 6);
   const cloudSentinel = PROJECTS_DATA.find((p) => p.slug === "cloudsentinel");
+  const primaryResearch = featuredResearch[0];
+  const secondaryResearch = featuredResearch.slice(1, 6);
 
   return (
     <div className="space-y-0">
-      {/* SECTION 2 — FLAGSHIP STUDIO HERO */}
-      <section className="section-divider relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-16 lg:pb-24">
-        {/* Masked Architectural Grid + Ambient Studio Glow */}
+      {/* SECTION 1 — ARCHITECTURAL BLUEPRINT HERO */}
+      <section className="section-divider relative overflow-hidden pt-6 pb-16 sm:pt-10 sm:pb-24">
         <div className="pointer-events-none absolute inset-0 bg-technical-grid-masked" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-radial-glow" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-radial-glow" />
 
-        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
-            {/* Left Column: Editorial Authority, Clear Hierarchy & Metrics */}
-            <div className="lg:col-span-7 flex flex-col justify-between space-y-7 sm:space-y-8">
-              <div className="space-y-6">
-                {/* System Eyebrow Pill */}
-                <div className="inline-flex items-center gap-2.5 rounded-full border border-brand-primary/40 bg-background-elevated/90 px-3.5 py-1.5 font-mono text-[11px] sm:text-xs tracking-wider text-brand-primary shadow-neon-sm">
-                  <span className="relative flex h-2 w-2 shrink-0">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-primary opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-primary" />
-                  </span>
-                  <span>[ SYSTEM ONLINE ] — SECURITY ENGINEERING</span>
-                </div>
+        <div className="container relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          {/* Outer Architectural Blueprint Frame */}
+          <div className="rounded-3xl border border-brand-border/80 bg-[#050C08]/75 backdrop-blur-xl shadow-[0_30px_80px_-25px_rgba(0,0,0,0.95)] overflow-hidden">
+            {/* Blueprint Frame Top Metadata Rail */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-border/70 bg-background-elevated/80 px-4 py-2.5 sm:px-7 font-mono text-[11px]">
+              <div className="flex items-center gap-2.5 text-brand-primary">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-primary opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-primary" />
+                </span>
+                <span className="font-semibold tracking-wider">
+                  [ SYSTEM ONLINE ] — SECURITY ENGINEERING
+                </span>
+              </div>
+              <div className="hidden sm:flex items-center gap-4 text-text-muted">
+                <span>{SITE_CONFIG.brandStatement}</span>
+                <span>·</span>
+                <span className="text-text-secondary">{SITE_CONFIG.alternativePositioning}</span>
+                <span>·</span>
+                <span className="text-brand-primary">VERIFIED BUILD v1.0</span>
+              </div>
+            </div>
 
-                {/* Primary Headline with Fluid Clamp Typography */}
-                <div className="space-y-3">
-                  <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    <span className="text-brand-primary">{SITE_CONFIG.brandStatement}</span>
-                    <span>//</span>
-                    <span>{SITE_CONFIG.alternativePositioning}</span>
+            {/* Split Blueprint Hero Body */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-brand-border/70">
+              {/* Left 7 Columns: Editorial Display Statement + CTAs */}
+              <div className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 xl:p-12 space-y-8">
+                <div className="space-y-6">
+                  {/* Brand Emblem Badge + Tagline */}
+                  <div className="inline-flex items-center gap-3 rounded-xl border border-brand-border/80 bg-background-card/90 px-3.5 py-2">
+                    <img
+                      src="/brand/code-commit-mark.png"
+                      alt="CODE.COMMIT Emblem"
+                      className="h-6 w-6 object-contain"
+                    />
+                    <span className="font-mono text-xs font-semibold tracking-widest text-text-primary">
+                      CODE<span className="text-brand-primary">.</span>COMMIT STUDIO
+                    </span>
+                    <span className="rounded bg-brand-deep px-2 py-0.5 font-mono text-[10px] text-brand-primary">
+                      UK / GLOBAL
+                    </span>
                   </div>
 
-                  <h1 className="font-display text-[2.35rem] font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl md:text-6xl xl:text-[4.25rem]">
+                  {/* Primary Headline */}
+                  <h1 className="font-display text-[2.4rem] font-bold leading-[1.03] tracking-tight text-text-primary sm:text-5xl md:text-6xl xl:text-[4.4rem]">
                     Find vulnerabilities.
                     <br />
-                    <span className="bg-gradient-to-r from-brand-primary via-[#5BFFB5] to-brand-secondary bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-brand-primary via-[#69FFB8] to-brand-secondary bg-clip-text text-transparent">
                       Fix them.
                     </span>
                     <br />
                     Build securely.
                   </h1>
+
+                  <p className="max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg">
+                    Offensive security, application security, cloud defence and secure software
+                    engineering — built around practical technical expertise.
+                  </p>
                 </div>
 
-                {/* Supporting Description */}
-                <p className="max-w-2xl text-base leading-relaxed text-text-secondary sm:text-lg lg:text-xl">
-                  Offensive security, application security, cloud defence and secure software
-                  engineering — built around practical technical expertise.
-                </p>
+                {/* Action Dock */}
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    <Link
+                      href="/services"
+                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
+                    >
+                      <span>Explore Services</span>
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                    <Link
+                      href="/work"
+                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl border border-brand-border bg-background-card px-6 py-4 text-xs sm:text-sm font-semibold text-text-primary transition-all hover:border-brand-primary hover:text-brand-primary"
+                    >
+                      <span>View Our Work</span>
+                      <span className="rounded bg-brand-deep px-2 py-0.5 font-mono text-[10px] text-brand-primary">
+                        {PROJECTS_DATA.length}
+                      </span>
+                    </Link>
+                    <Link
+                      href="/tools"
+                      className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border/70 bg-background-elevated/80 px-5 py-4 font-mono text-xs text-text-secondary hover:border-brand-primary hover:text-brand-primary transition-colors"
+                    >
+                      <Wrench className="h-3.5 w-3.5 text-brand-primary" />
+                      <span>Security Lab Tools</span>
+                    </Link>
+                  </div>
 
-                {/* Responsive Primary & Secondary CTAs (Full width on mobile, inline on tablet/desktop) */}
-                <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-                  <Link
-                    href="/services"
-                    className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
-                  >
-                    <span>Explore Services</span>
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                  <Link
-                    href="/work"
-                    className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl border border-brand-border/90 bg-background-card/90 px-6 py-4 text-xs sm:text-sm font-semibold text-text-primary shadow-[inset_0_1px_0_0_rgba(243,248,245,0.06)] transition-all hover:border-brand-primary/60 hover:text-brand-primary"
-                  >
-                    <span>View Our Work ({PROJECTS_DATA.length} Systems)</span>
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </Link>
-                  <Link
-                    href="/tools"
-                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border/70 bg-background-elevated/70 px-5 py-4 font-mono text-xs text-brand-primary hover:border-brand-primary"
-                  >
-                    <Wrench className="h-3.5 w-3.5" />
-                    <span>Zero-Egress Lab Tools</span>
-                  </Link>
+                  {/* Architectural Proof Footnote */}
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-brand-border/50 pt-5 font-mono text-xs text-text-muted">
+                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
+                      <span>Signed RoE Penetration Testing</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
+                      <span>AWS & Azure Posture Engineering</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-text-secondary">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-brand-primary" />
+                      <span>Zero-Trust Full-Stack Builds</span>
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Verified Studio Engineering Ledger Strip — Flush with Right Column Bottom */}
-              <div className="grid grid-cols-2 gap-3 border-t border-brand-border/70 pt-6 sm:grid-cols-4">
-                <Link
-                  href="/work"
-                  className="group rounded-xl border border-brand-border/60 bg-background-elevated/60 p-3.5 transition-colors hover:border-brand-primary/50"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                      {PROJECTS_DATA.length}
-                    </p>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-primary" />
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] text-text-secondary">
-                    Verified GitHub Systems
-                  </p>
-                </Link>
-
-                <Link
-                  href="/services"
-                  className="group rounded-xl border border-brand-border/60 bg-background-elevated/60 p-3.5 transition-colors hover:border-brand-primary/50"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                      06
-                    </p>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-primary" />
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] text-text-secondary">
-                    Core Security Practices
-                  </p>
-                </Link>
-
-                <Link
-                  href="/research"
-                  className="group rounded-xl border border-brand-border/60 bg-background-elevated/60 p-3.5 transition-colors hover:border-brand-primary/50"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                      08
-                    </p>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-primary" />
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] text-text-secondary">
-                    Research Lab Disciplines
-                  </p>
-                </Link>
-
-                <Link
-                  href="/insights"
-                  className="group rounded-xl border border-brand-border/60 bg-background-elevated/60 p-3.5 transition-colors hover:border-brand-primary/50"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                      60
-                    </p>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-primary" />
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] text-text-secondary">
-                    Curriculum Lesson Slots
-                  </p>
-                </Link>
+              {/* Right 5 Columns: Embedded Interactive Control Plane */}
+              <div className="lg:col-span-5 bg-background-secondary/60 p-4 sm:p-6 flex flex-col justify-center">
+                <SecurityTelemetryConsole />
               </div>
             </div>
 
-            {/* Right Column: Unified Multi-Plane Telemetry & CLI Control Console */}
-            <div className="lg:col-span-5 flex flex-col">
-              <SecurityTelemetryConsole />
+            {/* Bottom 4-Cell Blueprint Telemetry Ledger Bar */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 divide-x divide-brand-border/70 border-t border-brand-border/70 bg-background-elevated/60">
+              <Link
+                href="/work"
+                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
+              >
+                <div>
+                  <p className="font-mono text-2xl sm:text-3xl font-bold text-brand-primary">
+                    {PROJECTS_DATA.length}
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
+                    Verified GitHub Systems
+                  </p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+
+              <Link
+                href="/services"
+                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
+              >
+                <div>
+                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
+                    06
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
+                    Core Security Practices
+                  </p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+
+              <Link
+                href="/research"
+                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
+              >
+                <div>
+                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
+                    08
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
+                    Research Lab Disciplines
+                  </p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+
+              <Link
+                href="/insights"
+                className="group flex items-center justify-between p-4 sm:px-7 sm:py-5 transition-colors hover:bg-background-card/80"
+              >
+                <div>
+                  <p className="font-mono text-2xl sm:text-3xl font-bold text-text-primary group-hover:text-brand-primary transition-colors">
+                    60
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-text-secondary">
+                    Curriculum Lesson Slots
+                  </p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-text-muted group-hover:text-brand-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 3 — CORE CAPABILITIES (BENTO STUDIO CARDS) */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
-            <div className="max-w-3xl space-y-2.5">
+      {/* SECTION 2 — CORE CAPABILITIES WITH CUSTOM SVG ARCHITECTURAL SCHEMATICS */}
+      <section className="section-divider bg-background-secondary py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
+          <FadeInSection className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-8 space-y-3">
               <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-primary">
-                <span>[ 01 // CORE CAPABILITIES ]</span>
+                <span>[ 01 // CORE CAPABILITIES & ENGINEERING ARCHITECTURE ]</span>
               </div>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
                 Three engineering disciplines. One unified security posture.
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-text-secondary">
-              Security vulnerabilities rarely stay confined to a single layer. We bridge offensive
-              discovery, defensive cloud architecture, and secure software engineering.
-            </p>
+            <div className="lg:col-span-4">
+              <p className="text-sm leading-relaxed text-text-secondary">
+                Security vulnerabilities rarely stay confined to a single layer. We bridge offensive
+                discovery, defensive cloud architecture, and secure software engineering.
+              </p>
+            </div>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {CORE_CAPABILITIES.map((cap, idx) => (
               <FadeInSection key={cap.category} delay={idx * 0.06}>
                 <SpotlightCard className="flex h-full flex-col justify-between p-6 sm:p-8">
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                  <div className="space-y-6">
+                    {/* Header Metadata */}
+                    <div className="flex items-center justify-between">
                       <span className="font-mono text-xs font-bold tracking-wider text-brand-primary">
                         {cap.code}
                       </span>
@@ -276,11 +327,14 @@ export default function HomePage() {
                       </span>
                     </div>
 
+                    {/* Custom Vector Schematic Diagram */}
+                    <DisciplineSchematic variant={cap.schematic} />
+
                     <div className="space-y-2">
-                      <p className="font-mono text-xs font-semibold uppercase tracking-widest text-brand-primary">
+                      <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-brand-primary">
                         {cap.category}
                       </p>
-                      <h3 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
+                      <h3 className="font-display text-2xl font-bold text-text-primary">
                         {cap.subtitle}
                       </h3>
                       <p className="text-sm leading-relaxed text-text-secondary">
@@ -288,14 +342,17 @@ export default function HomePage() {
                       </p>
                     </div>
 
-                    <ul className="space-y-2.5 border-t border-brand-border/60 pt-5">
+                    <ul className="space-y-2 border-t border-brand-border/60 pt-4">
                       {cap.items.map((item) => (
                         <li
                           key={item}
-                          className="flex items-center gap-3 rounded-xl border border-brand-border/50 bg-background-elevated/60 px-3.5 py-2.5 text-sm font-medium text-text-primary"
+                          className="flex items-center justify-between rounded-xl border border-brand-border/50 bg-background-elevated/60 px-3.5 py-2.5 text-xs sm:text-sm font-medium text-text-primary"
                         >
-                          <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" />
-                          <span>{item}</span>
+                          <div className="flex items-center gap-2.5">
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" />
+                            <span>{item}</span>
+                          </div>
+                          <span className="font-mono text-[10px] text-text-muted">VERIFIED</span>
                         </li>
                       ))}
                     </ul>
@@ -317,113 +374,155 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 4 — PROFESSIONAL SECURITY SERVICES */}
-      <section className="section-divider bg-background py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-2xl space-y-2.5">
-              <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
-                [ 02 // PROFESSIONAL SERVICES MATRIX ]
-              </p>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                Practical security assessments and engineering engagements.
-              </h2>
-              <p className="text-sm sm:text-base text-text-secondary">
-                Every engagement produces reproducible technical evidence, code-level remediation
-                guidance, and post-fix verification retesting.
-              </p>
+      {/* SECTION 3 — PROFESSIONAL SERVICES (ASYMMETRICAL STICKY EDITORIAL LAYOUT) */}
+      <section className="section-divider bg-background py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+            {/* Left 4 Columns: Sticky Editorial Anchor */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-28 space-y-6">
+                <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-primary">
+                  <span>[ 02 // SERVICES MATRIX ]</span>
+                </div>
+
+                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+                  Practical security assessments and engineering engagements.
+                </h2>
+
+                <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
+                  Every engagement is executed under explicit written authorisation and produces
+                  reproducible Proof-of-Concept evidence, framework-specific code patches, and
+                  post-remediation verification retesting.
+                </p>
+
+                <div className="rounded-2xl border border-brand-border bg-background-card p-5 space-y-3">
+                  <p className="font-mono text-xs font-bold uppercase tracking-wider text-brand-primary">
+                    Engagement Guarantees
+                  </p>
+                  <ul className="space-y-2 text-xs text-text-secondary">
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
+                      <span>Manual-first assessment (never raw scanner dumps)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
+                      <span>Direct developer & architect remediation walkthroughs</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
+                      <span>Verification retest included after fixes ship</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-background shadow-neon-sm hover:bg-brand-secondary"
+                  >
+                    <span>Initialize Project Scope</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-card px-6 py-3.5 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary"
+                  >
+                    <span>Compare All 6 Services</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
-            <Link
-              href="/services"
-              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-card px-5 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-text-primary hover:border-brand-primary hover:text-brand-primary transition-colors"
-            >
-              <span>Full Services Specification</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </FadeInSection>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {SERVICES_DATA.map((service, idx) => {
-              const IconComponent = SERVICE_ICONS[service.iconName] || ShieldCheck;
-              return (
-                <FadeInSection key={service.slug} delay={idx * 0.04}>
-                  <SpotlightCard as="article" className="flex h-full flex-col justify-between p-6 sm:p-7">
-                    <div className="space-y-5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/70 text-brand-primary shadow-neon-sm">
-                          <IconComponent className="h-5 w-5" />
-                        </div>
-                        <div className="text-right font-mono">
-                          <span className="block text-[10px] text-brand-primary">
-                            SERVICE // 0{idx + 1}
-                          </span>
-                          <span className="text-[10px] uppercase tracking-wider text-text-muted">
-                            {service.capabilityGroup}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="font-display text-xl font-bold text-text-primary">
+            {/* Right 8 Columns: 2-Column Precision Service Specification Cards */}
+            <div className="lg:col-span-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {SERVICES_DATA.map((service, idx) => {
+                const IconComponent = SERVICE_ICONS[service.iconName] || ShieldCheck;
+                return (
+                  <FadeInSection key={service.slug} delay={idx * 0.04}>
+                    <SpotlightCard
+                      as="article"
+                      className="flex h-full flex-col justify-between p-6 sm:p-7"
+                    >
+                      <div className="space-y-5">
+                        <div className="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-primary/40 bg-brand-deep/80 text-brand-primary">
+                              <IconComponent className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <span className="font-mono text-[10px] font-bold text-brand-primary block">
+                                SPEC // 0{idx + 1}
+                              </span>
+                              <span className="font-mono text-[10px] text-text-muted">
+                                {service.capabilityGroup}
+                              </span>
+                            </div>
+                          </div>
                           <Link
-                            href={`/services/${service.slug}`}
-                            className="hover:text-brand-primary transition-colors"
+                            href={`/contact?service=${service.slug}`}
+                            className="rounded-lg border border-brand-border bg-background-elevated px-2.5 py-1 font-mono text-[10px] text-text-secondary hover:border-brand-primary hover:text-brand-primary"
                           >
-                            {service.shortTitle}
+                            Scope →
                           </Link>
-                        </h3>
-                        <p className="text-sm leading-relaxed text-text-secondary">
-                          {service.shortDescription}
-                        </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <h3 className="font-display text-xl font-bold text-text-primary">
+                            <Link
+                              href={`/services/${service.slug}`}
+                              className="hover:text-brand-primary transition-colors"
+                            >
+                              {service.shortTitle}
+                            </Link>
+                          </h3>
+                          <p className="text-sm leading-relaxed text-text-secondary">
+                            {service.shortDescription}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2 pt-1">
+                          <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
+                            Key Engineering Deliverables
+                          </p>
+                          <ul className="space-y-1.5 text-xs text-text-secondary">
+                            {service.deliverables.slice(0, 3).map((deliv) => (
+                              <li key={deliv} className="flex items-start gap-2">
+                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
+                                <span>{deliv}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
 
-                      <div className="space-y-2 border-t border-brand-border/60 pt-4">
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
-                          Verified Deliverables
-                        </p>
-                        <ul className="space-y-1.5 text-xs text-text-secondary">
-                          {service.deliverables.slice(0, 3).map((deliv) => (
-                            <li key={deliv} className="flex items-start gap-2.5">
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
-                              <span>{deliv}</span>
-                            </li>
-                          ))}
-                        </ul>
+                      <div className="mt-6 flex items-center justify-between border-t border-brand-border/50 pt-4">
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="group inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-primary"
+                        >
+                          <span>Full Service Architecture</span>
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                        </Link>
                       </div>
-                    </div>
-
-                    <div className="mt-6 flex items-center justify-between border-t border-brand-border/50 pt-4">
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className="group inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-primary"
-                      >
-                        <span>Learn More</span>
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                      <Link
-                        href={`/contact?service=${service.slug}`}
-                        className="font-mono text-[11px] text-text-muted hover:text-text-primary"
-                      >
-                        Scope →
-                      </Link>
-                    </div>
-                  </SpotlightCard>
-                </FadeInSection>
-              );
-            })}
+                    </SpotlightCard>
+                  </FadeInSection>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 5 — FEATURED ENGINEERING WORK & FLAGSHIP CLOUDSENTINEL SPOTLIGHT */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* SECTION 4 — FEATURED ENGINEERING WORK (ASYMMETRICAL BENTO SHOWCASE) */}
+      <section className="section-divider bg-background-secondary py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
           <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div className="max-w-3xl space-y-2.5">
               <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
                 [ 03 // FEATURED ENGINEERING WORK & PLATFORMS ]
               </p>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
                 Verified security systems from our GitHub portfolio.
               </h2>
               <p className="text-sm sm:text-base text-text-secondary">
@@ -451,16 +550,16 @@ export default function HomePage() {
                 href="/work"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-background hover:bg-brand-secondary shadow-neon-sm"
               >
-                <span>All {PROJECTS_DATA.length} Portfolio Systems</span>
+                <span>Explore All {PROJECTS_DATA.length} Systems</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </FadeInSection>
 
-          {/* Flagship Studio Showcase Banner: CloudSentinel */}
+          {/* Flagship CloudSentinel Command Showcase */}
           {cloudSentinel && (
             <FadeInSection>
-              <SpotlightCard className="specular-top border-brand-primary/40 p-6 sm:p-9 lg:p-10">
+              <SpotlightCard className="specular-top border-brand-primary/45 p-6 sm:p-9 lg:p-10">
                 <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
                   <div className="lg:col-span-7 space-y-5">
                     <div className="flex flex-wrap items-center gap-3">
@@ -473,7 +572,7 @@ export default function HomePage() {
                       </span>
                     </div>
 
-                    <h3 className="font-display text-xl font-bold text-text-primary sm:text-3xl">
+                    <h3 className="font-display text-2xl font-bold text-text-primary sm:text-3xl">
                       CloudSentinel — Hybrid Cloud Security Platform for AWS & Microsoft Azure
                     </h3>
 
@@ -503,9 +602,7 @@ export default function HomePage() {
 
                   <div className="lg:col-span-5 grid grid-cols-2 gap-3">
                     <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                        18
-                      </span>
+                      <span className="font-mono text-2xl font-bold text-brand-primary">18</span>
                       <p className="font-display text-xs font-bold text-text-primary">
                         Deterministic Posture Rules
                       </p>
@@ -514,9 +611,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                        09
-                      </span>
+                      <span className="font-mono text-2xl font-bold text-brand-primary">09</span>
                       <p className="font-display text-xs font-bold text-text-primary">
                         MITRE ATT&CK Log Rules
                       </p>
@@ -525,9 +620,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                        21
-                      </span>
+                      <span className="font-mono text-2xl font-bold text-brand-primary">21</span>
                       <p className="font-display text-xs font-bold text-text-primary">
                         PostgreSQL 16 RLS Entities
                       </p>
@@ -536,9 +629,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="rounded-xl border border-brand-border bg-background-elevated/85 p-4 space-y-1">
-                      <span className="font-mono text-xl sm:text-2xl font-bold text-brand-primary">
-                        SoD
-                      </span>
+                      <span className="font-mono text-2xl font-bold text-brand-primary">SoD</span>
                       <p className="font-display text-xs font-bold text-text-primary">
                         Approval-Gated Fixes
                       </p>
@@ -552,24 +643,29 @@ export default function HomePage() {
             </FadeInSection>
           )}
 
-          {/* Featured Portfolio Bento Grid */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Asymmetrical Bento Portfolio Grid (First 2 cards span 6 cols each on lg; next 6 span 4 cols each) */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-12">
             {featuredProjects
               .filter((p) => p.slug !== "cloudsentinel")
               .map((project, idx) => {
                 const detailHref = project.isProduct
                   ? `/products/${project.slug}`
                   : `/work/${project.slug}`;
+                const isWideBento = idx < 2;
 
                 return (
-                  <FadeInSection key={project.slug} delay={idx * 0.04}>
+                  <FadeInSection
+                    key={project.slug}
+                    delay={idx * 0.04}
+                    className={isWideBento ? "lg:col-span-6" : "lg:col-span-4"}
+                  >
                     <SpotlightCard
                       as="article"
-                      className="flex h-full flex-col justify-between p-6"
+                      className="flex h-full flex-col justify-between p-6 sm:p-7"
                     >
                       <div className="space-y-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="rounded-full border border-brand-primary/30 bg-brand-deep/80 px-3 py-0.5 font-mono text-[11px] text-brand-primary">
+                          <span className="rounded-full border border-brand-primary/35 bg-brand-deep/85 px-3 py-0.5 font-mono text-[11px] text-brand-primary">
                             {project.category}
                           </span>
                           <span className="font-mono text-[10px] text-text-muted">
@@ -578,7 +674,7 @@ export default function HomePage() {
                         </div>
 
                         <div className="space-y-2">
-                          <h3 className="font-display text-xl font-bold text-text-primary">
+                          <h3 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
                             <Link
                               href={detailHref}
                               className="hover:text-brand-primary transition-colors"
@@ -591,22 +687,24 @@ export default function HomePage() {
                           </p>
                         </div>
 
-                        <div className="space-y-2 border-t border-brand-border/50 pt-3">
+                        <div className="space-y-2 border-t border-brand-border/50 pt-3.5">
                           <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
-                            Verified Capabilities
+                            Implemented & Verified Architecture
                           </p>
                           <ul className="space-y-1.5 text-xs text-text-secondary">
-                            {project.implementedFeatures.slice(0, 2).map((feat) => (
-                              <li key={feat} className="flex items-start gap-2">
-                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
-                                <span>{feat}</span>
-                              </li>
-                            ))}
+                            {project.implementedFeatures
+                              .slice(0, isWideBento ? 3 : 2)
+                              .map((feat) => (
+                                <li key={feat} className="flex items-start gap-2">
+                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary shrink-0" />
+                                  <span>{feat}</span>
+                                </li>
+                              ))}
                           </ul>
                         </div>
 
                         <div className="flex flex-wrap gap-1.5 pt-2">
-                          {project.technologies.slice(0, 5).map((tech) => (
+                          {project.technologies.slice(0, 6).map((tech) => (
                             <span
                               key={tech}
                               className="rounded-md border border-brand-border/70 bg-background-elevated px-2.5 py-0.5 font-mono text-[11px] text-text-secondary"
@@ -622,7 +720,7 @@ export default function HomePage() {
                           href={detailHref}
                           className="group inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-brand-primary"
                         >
-                          <span>Inspect System</span>
+                          <span>Inspect System Blueprint</span>
                           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                         </Link>
                         <a
@@ -632,7 +730,7 @@ export default function HomePage() {
                           className="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-text-primary"
                         >
                           <GitBranch className="h-3.5 w-3.5" />
-                          <span>Repository</span>
+                          <span>GitHub</span>
                         </a>
                       </div>
                     </SpotlightCard>
@@ -643,15 +741,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 6 — SECURITY RESEARCH LAB */}
-      <section className="section-divider bg-background py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* SECTION 5 — SECURITY RESEARCH LAB (EDITORIAL SPOTLIGHT + LEDGER FEED) */}
+      <section className="section-divider bg-background py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
           <FadeInSection className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div className="max-w-3xl space-y-2.5">
               <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
                 [ 04 // SECURITY RESEARCH LABORATORY ]
               </p>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+              <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
                 Technical research briefs & MITRE ATT&CK analysis.
               </h2>
               <p className="text-sm sm:text-base text-text-secondary">
@@ -669,78 +767,140 @@ export default function HomePage() {
             </Link>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredResearch.map((article, idx) => (
-              <FadeInSection key={article.slug} delay={idx * 0.04}>
+          {/* Editorial Split: Left Featured Deep-Dive Brief + Right Indexed Briefs */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            {primaryResearch && (
+              <div className="lg:col-span-5">
                 <SpotlightCard
                   as="article"
-                  className="flex h-full flex-col justify-between p-6"
+                  className="specular-top flex h-full flex-col justify-between border-brand-primary/40 p-6 sm:p-8"
                 >
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <Link
-                        href={`/research/categories/${article.categorySlug}`}
-                        className="rounded-full border border-brand-primary/30 bg-brand-deep px-3 py-0.5 font-mono text-[11px] text-brand-primary hover:underline"
-                      >
-                        {article.categoryName}
-                      </Link>
-                      <span className="rounded border border-status-warning/40 bg-status-warning/10 px-2 py-0.5 font-mono text-[10px] text-status-warning">
+                      <span className="rounded-full border border-brand-primary/40 bg-brand-deep px-3 py-1 font-mono text-xs text-brand-primary">
+                        LEAD BRIEF · {primaryResearch.categoryName}
+                      </span>
+                      <span className="rounded border border-status-warning/40 bg-status-warning/10 px-2.5 py-0.5 font-mono text-[10px] text-status-warning">
                         DRAFT BRIEF
                       </span>
                     </div>
 
-                    <h3 className="font-display text-lg font-bold leading-snug text-text-primary">
+                    <h3 className="font-display text-2xl font-bold leading-snug text-text-primary sm:text-3xl">
                       <Link
-                        href={`/research/${article.slug}`}
+                        href={`/research/${primaryResearch.slug}`}
                         className="hover:text-brand-primary transition-colors"
                       >
-                        {article.title}
+                        {primaryResearch.title}
                       </Link>
                     </h3>
 
-                    <p className="text-sm leading-relaxed text-text-secondary">
-                      {article.summary}
+                    <p className="text-sm sm:text-base leading-relaxed text-text-secondary">
+                      {primaryResearch.summary}
                     </p>
+
+                    <div className="space-y-2 border-t border-brand-border/60 pt-4">
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-brand-primary">
+                        Mapped MITRE ATT&CK Techniques
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {primaryResearch.mitreAttackRefs.map((ref) => (
+                          <span
+                            key={ref.id}
+                            className="rounded-lg border border-brand-border bg-background-elevated px-2.5 py-1 font-mono text-xs text-text-primary"
+                          >
+                            <strong className="text-brand-primary">{ref.id}</strong> · {ref.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-6 space-y-3 border-t border-brand-border/50 pt-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      {article.mitreAttackRefs.map((ref) => (
-                        <span
-                          key={ref.id}
-                          className="rounded border border-brand-border bg-background-elevated px-2 py-0.5 font-mono text-[10px] text-text-muted"
-                        >
-                          ATT&CK {ref.id}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center justify-between font-mono text-xs text-text-muted">
-                      <span>{article.readingTimeMin} min read</span>
-                      <Link
-                        href={`/research/${article.slug}`}
-                        className="inline-flex items-center gap-1 font-semibold text-brand-primary hover:underline"
-                      >
-                        <BookOpen className="h-3.5 w-3.5" />
-                        <span>Read Brief</span>
-                      </Link>
-                    </div>
+                  <div className="mt-8 flex items-center justify-between border-t border-brand-border/60 pt-4 font-mono text-xs">
+                    <span className="text-text-muted">
+                      {primaryResearch.readingTimeMin} min technical read
+                    </span>
+                    <Link
+                      href={`/research/${primaryResearch.slug}`}
+                      className="inline-flex items-center gap-1.5 font-bold text-brand-primary hover:underline"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      <span>Read Full Brief →</span>
+                    </Link>
                   </div>
                 </SpotlightCard>
-              </FadeInSection>
-            ))}
+              </div>
+            )}
+
+            {/* Right 7 Columns: Structured Technical Ledger Rows */}
+            <div className="lg:col-span-7 flex flex-col justify-between gap-4">
+              {secondaryResearch.map((article, idx) => (
+                <SpotlightCard
+                  key={article.slug}
+                  as="article"
+                  className="p-5 sm:p-6"
+                >
+                  <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px]">
+                        <span className="text-brand-primary font-bold">
+                          BRIEF // 0{idx + 2}
+                        </span>
+                        <span>·</span>
+                        <Link
+                          href={`/research/categories/${article.categorySlug}`}
+                          className="text-brand-primary hover:underline"
+                        >
+                          {article.categoryName}
+                        </Link>
+                        <span>·</span>
+                        <span className="text-text-muted">{article.readingTimeMin} min read</span>
+                        {article.mitreAttackRefs.slice(0, 2).map((ref) => (
+                          <span
+                            key={ref.id}
+                            className="rounded border border-brand-border bg-background-elevated px-1.5 py-0.5 text-[10px] text-text-secondary"
+                          >
+                            {ref.id}
+                          </span>
+                        ))}
+                      </div>
+
+                      <h3 className="font-display text-base sm:text-lg font-bold text-text-primary">
+                        <Link
+                          href={`/research/${article.slug}`}
+                          className="hover:text-brand-primary transition-colors"
+                        >
+                          {article.title}
+                        </Link>
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-text-secondary line-clamp-2">
+                        {article.summary}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/research/${article.slug}`}
+                      className="inline-flex shrink-0 items-center gap-1.5 self-start sm:self-center rounded-xl border border-brand-border bg-background-elevated px-3.5 py-2 font-mono text-xs font-semibold text-brand-primary hover:border-brand-primary"
+                    >
+                      <span>Inspect</span>
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </SpotlightCard>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 7 — HOW WE WORK */}
-      <section className="section-divider bg-background-secondary py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* SECTION 6 — HOW WE WORK */}
+      <section className="section-divider bg-background-secondary py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
           <FadeInSection className="max-w-3xl space-y-2.5">
             <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
               [ 05 // HOW WE WORK ]
             </p>
-            <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+            <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
               Structured engineering methodology from discovery to verified closure.
             </h2>
             <p className="text-sm sm:text-base text-text-secondary">
@@ -753,14 +913,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 8 — TECHNOLOGY */}
-      <section className="section-divider bg-background py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* SECTION 7 — TECHNOLOGY & INSTRUMENTATION STACK */}
+      <section className="section-divider bg-background py-16 sm:py-24">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 space-y-12">
           <FadeInSection className="max-w-3xl space-y-2.5">
             <p className="font-mono text-xs uppercase tracking-widest text-brand-primary">
               [ 06 // TECHNOLOGY & INSTRUMENTATION STACK ]
             </p>
-            <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+            <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
               Production engineering and security instrumentation stack.
             </h2>
             <p className="text-sm sm:text-base text-text-secondary">
@@ -818,38 +978,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 9 — FINAL CTA */}
+      {/* SECTION 8 — FINAL CTA */}
       <section className="relative overflow-hidden py-16 sm:py-24 lg:py-28">
         <div className="pointer-events-none absolute inset-0 bg-technical-grid-masked" />
         <div className="pointer-events-none absolute inset-0 bg-radial-glow" />
-        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-          <SpotlightCard className="specular-top mx-auto max-w-4xl border-brand-primary/50 p-7 text-center shadow-neon-md sm:p-12 lg:p-16">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-background-elevated px-4 py-1.5 font-mono text-xs text-brand-primary">
-                <Shield className="h-3.5 w-3.5" />
-                <span>READY TO SCOPE YOUR ENGAGEMENT</span>
+        <div className="container relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          <SpotlightCard className="specular-top mx-auto max-w-5xl border-brand-primary/50 p-7 sm:p-12 lg:p-16 shadow-neon-md">
+            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
+              <div className="lg:col-span-8 space-y-4 text-left">
+                <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-background-elevated px-3.5 py-1.5 font-mono text-xs text-brand-primary">
+                  <Shield className="h-3.5 w-3.5" />
+                  <span>READY TO SCOPE YOUR ENGAGEMENT</span>
+                </div>
+
+                <h2 className="font-display text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+                  Secure today. Build a safer tomorrow.
+                </h2>
+
+                <p className="max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base lg:text-lg">
+                  Have a security challenge or an engineering project? Let&apos;s define the scope
+                  and build a practical solution.
+                </p>
               </div>
 
-              <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                Secure today. Build a safer tomorrow.
-              </h2>
-
-              <p className="mx-auto max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base lg:text-lg">
-                Have a security challenge or an engineering project? Let&apos;s define the scope and
-                build a practical solution.
-              </p>
-
-              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3.5 pt-2">
+              <div className="lg:col-span-4 flex flex-col gap-3">
                 <Link
                   href="/contact"
-                  className="group inline-flex items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-8 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
+                  className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 py-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-background shadow-neon-sm transition-all hover:bg-brand-secondary hover:shadow-neon-md"
                 >
                   <span>Initialize Project</span>
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
                 <Link
                   href="/services"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-elevated px-7 py-4 text-xs sm:text-sm font-semibold text-text-primary hover:border-brand-primary"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-border bg-background-elevated px-6 py-4 text-xs sm:text-sm font-semibold text-text-primary hover:border-brand-primary"
                 >
                   <span>Review Service Scopes</span>
                 </Link>
